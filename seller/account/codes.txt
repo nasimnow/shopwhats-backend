@@ -1,0 +1,3 @@
+res.status(400).json({message:{messageBody :"username isa lready taken",status: true}})
+500-server
+201-success
