@@ -37,14 +37,22 @@ app.use(function(req, res, next) {
     next();
   });
 
-app.use('/register',isNotLogin,require('./seller/account/register'));
+app.use('/seller/register',isNotLogin,require('./seller/account/register'));
 
-app.use('/login',isNotLogin, require('./seller/account/login'))
+app.use('/seller/login',isNotLogin, require('./seller/account/login'))
 
-app.use('/products',isLogin,require('./seller/products/products'))
+app.use('/seller/products',isLogin,require('./seller/products/products'))
 
+app.use('/seller/catogories',isLogin,require('./seller/catogories/catogories'))
 
-app.get('/logout',isLogin,(req,res)=>{
+app.get('/seller/loginstatus',(req,res)=>{
+    if(req.isAuthenticated()){
+      return res.status(201).json({message:{messageBody :'Loginned',status: true,login: true}})
+    }
+      return res.status(500).json({message:{messageBody :'Not Loginned',status: false,login: false}})
+  })
+
+app.get('/seller/logout',isLogin,(req,res)=>{
     req.logOut()
     res.json({message:'succesfull Logggedout',login: false})
 })
