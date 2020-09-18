@@ -10,11 +10,10 @@ router.get('/',(req,res)=>{
 router.post('/', (req, res)=>{
   passport.authenticate('local', (err, user, info)=> {
     if (err) { return next(err) }
-    if (!user) { return res.status(400).json({message:{messageBody :"Check YOur Username or Password",status: false}}) }
+    if (!user) { return res.status(400).json({status:false,login:false,error:{message :"Check your credentials",code:101}}) }
     req.logIn(user, (err)=> {
       if (err) { return next(err) }
-      
-      res.status(201).json({message:{messageBody :`Login Successfull ${req.user[0].account_phone}`,status: true,login: true}})
+      return res.status(201).json({status:true,login:true,data:req.user[0]})
     })
   })(req, res)
 })

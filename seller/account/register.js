@@ -9,19 +9,21 @@ router.get('/',(req,res)=>{
 
 router.post('/',async (req,res)=>{
    try {
-       hashedPassword = await bcrypt.hash(req.body.password,10);
-    let account ={account_phone:req.body.phone,
-        account_password:hashedPassword,
-    account_store: req.body.storename,account_whatsapp:req.body.phone};
+       hashedPassword = await bcrypt.hash(req.body.account_password,10);
     
-    checkUser(req.body.phone,()=>{
+    checkUser(req.body.account_phone,req.body.account_store,(store_new)=>{
+        let account ={account_phone:req.body.account_phone,
+            account_password:hashedPassword,
+        account_store: store_new,
+        account_whatsapp:req.body.account_phone}
         let sql = 'INSERT INTO account SET ?'
         let query = mysqlConnection.query(sql,account,(err,result)=>{
-                if(err) res.status(500).json({message:{messageBody :err,status: false}})
-                res.status(400).json({message:{messageBody :`Succesfull Created ${req.body.phone}`,status: true}})
+            
+                if(err) res.status(500).json({status:false,error:{message :err}})
+                res.status(201).json({status:true,login:false,data:account})
         })
     },()=>{
-        res.status(301).json({message:{messageBody :`Already Registered`,status: false}})
+        res.status(400).json({status:false,login:false,error:{message :"Already Registered",code:100}})
     })
    } catch (error) {
        
@@ -29,12 +31,26 @@ router.post('/',async (req,res)=>{
 
 })
 
-function checkUser(phone,addUser,registerd){
+function checkUser(phone,store,addUser,registerd){
     let sql = `SELECT COUNT(*) AS count  FROM account WHERE account_phone=${phone}`
-    let count;
-    let query = mysqlConnection.query(sql,(err,result)=>{            
-        if(result[0].count==0)addUser()
+    let query = mysqlConnection.query(sql,(err,result)=>{ 
+        if(result[0].count==0){
+        checkLink(store,addUser)
+        }
         else registerd()
+})  
+}
+
+function checkLink(store,addUser){
+    let sql = `SELECT COUNT(*) AS count  FROM account WHERE account_store='${store}'`
+    let query = mysqlConnection.query(sql,(err,result)=>{            
+        if(result[0].count==0){
+            addUser(store)
+        }
+        else {
+            let newStore = store+Math.floor(Math.random()*(999-100+1)+100)
+            checkLink(newStore,addUser)
+        }
 })  
 }
 

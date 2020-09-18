@@ -45,6 +45,8 @@ app.use('/seller/products',isLogin,require('./seller/products/products'))
 
 app.use('/seller/catogories',isLogin,require('./seller/catogories/catogories'))
 
+app.use('/seller/store',isLogin,require('./seller/account/store'))
+
 app.get('/seller/loginstatus',(req,res)=>{
     if(req.isAuthenticated()){
       return res.status(201).json({message:{messageBody :'Loginned',status: true,login: true}})
@@ -56,6 +58,9 @@ app.get('/seller/logout',isLogin,(req,res)=>{
     req.logOut()
     res.json({message:'succesfull Logggedout',login: false})
 })
+
+
+
 
 function isLogin(req,res,next){
     if(req.isAuthenticated()){
@@ -69,4 +74,5 @@ function isNotLogin(req,res,next){
     }
     return next()
 }
+
 app.listen(PORT);
