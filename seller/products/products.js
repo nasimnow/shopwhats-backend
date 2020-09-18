@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs')
 const multer = require('multer')
+const path = require('path')
 
 //get all products of current user
 router.get('/',(req,res)=>{
@@ -99,7 +100,7 @@ router.get('/catogories/no/:cat',(req,res)=>{
 
 let storage = multer.diskStorage({
     destination: function(req,res,callback){
-        let dir ='./images'
+        let dir ='seller/products/images'
         if(!fs.existsSync(dir))
         {
             fs.mkdirSync(dir)
@@ -107,16 +108,17 @@ let storage = multer.diskStorage({
         callback(null,dir)
     },
     filename:function(req,file,callback){
-        callback(null,file.originalname)
+        callback(null,file.fieldname+ Date.now() + path.extname(file.originalname))
     }
 })
  
-let upload = multer({ storage: storage}).array('product_image',6)
+
 
 router.post('/imageupload',(req,res,next)=>{
+    let upload = multer({ storage: storage}).array('product_image',6)
     upload(req,res,function(err){
         if(err) return res.status(500).json({status:false,error:{message :err}})
-        res.send('upload Finished')
+        return res.send('upload Finished')
     })
 })
 

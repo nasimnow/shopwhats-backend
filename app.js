@@ -59,7 +59,9 @@ app.get('/seller/logout',isLogin,(req,res)=>{
     res.json({message:'succesfull Logggedout',login: false})
 })
 
-
+app.get('/upload',(req,res)=>{
+    res.render('upload.ejs')
+  })
 
 
 function isLogin(req,res,next){
