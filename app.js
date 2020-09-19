@@ -18,18 +18,16 @@ const PORT = process.env.PORT || 3000;
 app.set("view-engine", "ejs");
 app.use(express.json());
 
-app.use(cors());
-app.options("*", cors());
+const corsOpts = {
+  origin: "*",
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "DELETE, PUT, GET, POST");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+  methods: ["GET", "POST"],
+
+  allowedHeaders: ["Content-Type"],
+};
+
+app.use(cors(corsOpts));
+
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 app.use(
