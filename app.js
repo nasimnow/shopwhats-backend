@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3000;
 app.set("view-engine", "ejs");
 app.use(express.json());
 
-app.use(cors());
+app.use(cors({ origin: "https://clever-jackson-e95218.netlify.app" }));
 app.options("*", cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
