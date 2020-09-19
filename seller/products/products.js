@@ -165,12 +165,12 @@ const uploader = multer({
 
 // Upload endpoint to send file to Firebase storage bucket
 router.post(
-  "/uploadimage:id",
+  "/uploadimage",
   uploader.array("product_image", 6),
   async (req, res, next) => {
     try {
       if (req.files.length > 0) {
-        const response = await UploadStorageFirebase(req.files, req.params.id);
+        const response = await UploadStorageFirebase(req.files, 2);
         return res.status(200).send(response);
       }
     } catch (error) {
