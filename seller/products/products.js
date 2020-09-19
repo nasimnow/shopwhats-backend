@@ -162,26 +162,26 @@ const bucket = storage.bucket("gs://shopwhats-542cb.appspot.com");
 const uploader = multer({
   storage: multer.memoryStorage(),
 });
-
+router.post("/uploadimage", (req, res) => res.send("nice"));
 // Upload endpoint to send file to Firebase storage bucket
-router.post(
-  "/uploadimage",
-  uploader.array("product_image", 6),
-  async (req, res, next) => {
-    try {
-      if (req.files.length > 0) {
-        const response = await UploadStorageFirebase(
-          req.files,
-          req.body.product_id
-        );
-        return res.status(200).send(response);
-      }
-    } catch (error) {
-      res.status(400).send(`Error, could not upload file: ${error}`);
-      return;
-    }
-  }
-);
+// router.post(
+//   "/uploadimage",
+//   uploader.array("product_image", 6),
+//   async (req, res, next) => {
+//     try {
+//       if (req.files.length > 0) {
+//         const response = await UploadStorageFirebase(
+//           req.files,
+//           req.body.product_id
+//         );
+//         return res.status(200).send(response);
+//       }
+//     } catch (error) {
+//       res.status(400).send(`Error, could not upload file: ${error}`);
+//       return;
+//     }
+//   }
+// );
 
 const UploadStorageFirebase = (files, product_id) => {
   let prom = new Promise((_resolve, _reject) => {
