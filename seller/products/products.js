@@ -162,7 +162,7 @@ const bucket = storage.bucket("gs://shopwhats-542cb.appspot.com");
 const uploader = multer({
   storage: multer.memoryStorage(),
 });
-router.post("/uploadimage", (req, res) => res.send("nice"));
+router.get("/uploadimage", (req, res) => res.send("nice"));
 // Upload endpoint to send file to Firebase storage bucket
 // router.post(
 //   "/uploadimage",
