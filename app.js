@@ -83,23 +83,19 @@ function isLogin(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  return res
-    .status(400)
-    .json({
-      status: false,
-      login: false,
-      error: { message: "Please Login", code: 103 },
-    });
+  return res.status(401).json({
+    status: false,
+    login: false,
+    error: { message: "Please Login", code: 103 },
+  });
 }
 function isNotLogin(req, res, next) {
   if (req.isAuthenticated()) {
-    return res
-      .status(400)
-      .json({
-        status: false,
-        login: true,
-        error: { message: "Already Loginned", code: 104 },
-      });
+    return res.status(400).json({
+      status: false,
+      login: true,
+      error: { message: "Already Loginned", code: 104 },
+    });
   }
   return next();
 }
