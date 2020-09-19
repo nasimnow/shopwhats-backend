@@ -18,16 +18,7 @@ const PORT = process.env.PORT || 3000;
 app.set("view-engine", "ejs");
 app.use(express.json());
 
-const corsOpts = {
-  origin: "*",
-
-  methods: ["GET", "POST"],
-
-  allowedHeaders: ["Content-Type"],
-};
-
-app.use(cors(corsOpts));
-
+app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 app.use(
@@ -45,11 +36,20 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 app.use("/seller/register", isNotLogin, require("./seller/account/register"));
 
 app.use("/seller/login", isNotLogin, require("./seller/account/login"));
 
-app.use("/seller/products", require("./seller/products/products"));
+app.use("/seller/products", isLogin, require("./seller/products/products"));
 
 app.use(
   "/seller/catogories",
