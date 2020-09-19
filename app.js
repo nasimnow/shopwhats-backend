@@ -19,32 +19,6 @@ app.set("view-engine", "ejs");
 app.use(express.json());
 
 app.use(cors());
-app.use(function (req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "https://clever-jackson-e95218.netlify.app"
-  );
-
-  // Request methods you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-
-  // Request headers you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
-  );
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader("Access-Control-Allow-Credentials", true);
-
-  // Pass to next layer of middleware
-  next();
-});
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 app.use(
@@ -62,11 +36,20 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 app.use("/seller/register", isNotLogin, require("./seller/account/register"));
 
 app.use("/seller/login", isNotLogin, require("./seller/account/login"));
 
-app.use("/seller/products", require("./seller/products/products"));
+app.use("/seller/products", isLogin, require("./seller/products/products"));
 
 app.use(
   "/seller/catogories",
