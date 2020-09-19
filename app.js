@@ -6,6 +6,7 @@ const passport = require("passport");
 const { v4: uuidv4 } = require("uuid");
 const session = require("express-session");
 const flash = require("express-flash");
+const fs = require("fs");
 const cors = require("cors");
 const mysqlConnection = require("./connection");
 const FileStore = require("session-file-store")(session);
@@ -49,7 +50,7 @@ app.use("/seller/register", isNotLogin, require("./seller/account/register"));
 
 app.use("/seller/login", isNotLogin, require("./seller/account/login"));
 
-app.use("/seller/products", require("./seller/products/products"));
+app.use("/seller/products", isLogin, require("./seller/products/products"));
 
 app.use(
   "/seller/catogories",
