@@ -12,13 +12,11 @@ router.post("/", (req, res) => {
       return next(err);
     }
     if (!user) {
-      return res
-        .status(400)
-        .json({
-          status: false,
-          login: false,
-          error: { message: "Check your credentials", code: 101 },
-        });
+      return res.status(400).json({
+        status: false,
+        login: false,
+        error: { message: "Check your credentials", code: 101 },
+      });
     }
     req.logIn(user, (err) => {
       if (err) {
