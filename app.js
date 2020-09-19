@@ -23,7 +23,7 @@ app.use(function (req, res, next) {
   // Website you wish to allow to connect
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "https://clever-jackson-e95218.netlify.app"
+    "https://clever-jackson-e95218.netlify.app/"
   );
 
   // Request methods you wish to allow
@@ -66,7 +66,7 @@ app.use("/seller/register", isNotLogin, require("./seller/account/register"));
 
 app.use("/seller/login", isNotLogin, require("./seller/account/login"));
 
-app.use("/seller/products", isLogin, require("./seller/products/products"));
+app.use("/seller/products", require("./seller/products/products"));
 
 app.use(
   "/seller/catogories",
