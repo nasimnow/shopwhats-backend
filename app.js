@@ -19,7 +19,7 @@ app.set("view-engine", "ejs");
 app.use(express.json());
 
 app.use(cors());
-app.options("/seller/products", cors());
+
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 app.use(
