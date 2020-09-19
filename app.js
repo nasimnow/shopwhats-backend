@@ -19,7 +19,6 @@ const PORT = process.env.PORT || 3000;
 app.set("view-engine", "ejs");
 app.use(express.json());
 
-app.use(cors({ origin: "https://clever-jackson-e95218.netlify.app" }));
 app.options("/products", cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
@@ -39,7 +38,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Origin",
+    "https://clever-jackson-e95218.netlify.app"
+  );
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
