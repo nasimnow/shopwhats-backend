@@ -150,13 +150,13 @@ router.get("/catogories/no/:cat", (req, res) => {
 // })
 
 const storage = new Storage({
-  projectId: "shopwhats-542cb",
+  projectId: "shopwhats-66d59",
   keyFilename:
-    "./services/shopwhats-542cb-firebase-adminsdk-tonri-a6268e96c4.json",
+    "./services/shopwhats-66d59-firebase-adminsdk-w4l15-98dbb653ba.json",
 });
 
 // Create a bucket associated to Firebase storage bucket
-const bucket = storage.bucket("gs://shopwhats-542cb.appspot.com");
+const bucket = storage.bucket("gs://shopwhats-66d59.appspot.com");
 
 // Initiating a memory storage engine to store files as Buffer objects
 const uploader = multer({
