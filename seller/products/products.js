@@ -170,7 +170,10 @@ router.post(
   async (req, res, next) => {
     try {
       if (req.files.length > 0) {
-        const response = await UploadStorageFirebase(req.files, 2);
+        const response = await UploadStorageFirebase(
+          req.files,
+          req.body.product_id
+        );
         return res.status(200).send(response);
       }
     } catch (error) {
