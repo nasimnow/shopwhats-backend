@@ -13,7 +13,7 @@ const FileStore = require("session-file-store")(session);
 
 const app = express();
 app.options("*", cors());
-require("./seller/account/passport-config")(passport);
+
 const PORT = process.env.PORT || 3000;
 
 app.use(function (req, res, next) {
@@ -37,7 +37,7 @@ app.use(function (req, res, next) {
   );
   next();
 });
-
+require("./seller/account/passport-config")(passport);
 app.set("view-engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
