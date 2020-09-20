@@ -34,5 +34,5 @@ app.post("/seller/products/uploadimage", upload.array("images", 12), function (
 });
 
 app.use(express.static(path.join(__dirname, "public")));
-
-app.listen(3001, () => console.log("Example app listening on port 3001!"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("Example app listening on port 3001!"));
