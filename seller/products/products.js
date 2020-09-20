@@ -171,7 +171,7 @@ router.post(
     try {
       if (req.files.length > 0) {
         const response = await UploadStorageFirebase(
-          req.files,
+          req.file,
           req.body.product_id
         );
         return res.status(200).send(response);
