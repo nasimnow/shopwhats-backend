@@ -60,7 +60,7 @@ app.use("/seller/register", isNotLogin, require("./seller/account/register"));
 
 app.use("/seller/login", isNotLogin, require("./seller/account/login"));
 
-app.use("/seller/products", require("./seller/products/products"));
+app.use("/seller/products", isLogin, require("./seller/products/products"));
 
 app.use(
   "/seller/catogories",
