@@ -12,16 +12,35 @@ const mysqlConnection = require("./connection");
 const FileStore = require("session-file-store")(session);
 
 const app = express();
-
+app.options("*", cors());
 require("./seller/account/passport-config")(passport);
 const PORT = process.env.PORT || 3000;
 
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested- With, Content-Type, Accept"
+  );
+  next();
+});
+
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "POST, GET, PATCH, DELETE, OPTIONS"
+  );
+  next();
+});
+
 app.set("view-engine", "ejs");
 app.use(express.json());
-
-app.options("/products", cors());
 app.use(express.urlencoded({ extended: false }));
-app.use(flash());
 app.use(
   session({
     genid: (req) => {
@@ -37,23 +56,11 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(function (req, res, next) {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "https://clever-jackson-e95218.netlify.app"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
-
 app.use("/seller/register", isNotLogin, require("./seller/account/register"));
 
 app.use("/seller/login", isNotLogin, require("./seller/account/login"));
 
-app.use("/seller/products", require("./seller/products/products"));
+app.use("/seller/products", isLogin, require("./seller/products/products"));
 
 app.use(
   "/seller/catogories",
