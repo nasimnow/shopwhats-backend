@@ -169,14 +169,15 @@ router.post(
   uploader.array("product_image", 6),
   async (req, res, next) => {
     try {
-      if (req.file.length > 0) {
+      if (req.files.length > 0) {
         const response = await UploadStorageFirebase(
-          req.file,
+          req.files,
           req.body.product_id
         );
         return res.status(200).send(response);
       }
     } catch (error) {
+      console.log(error);
       res.status(400).send(`Error, could not upload file: ${error}`);
       return;
     }
