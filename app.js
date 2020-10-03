@@ -2,7 +2,6 @@ const express = require("express");
 const passport = require("passport");
 const { v4: uuidv4 } = require("uuid");
 const session = require("express-session");
-const flash = require("express-flash");
 const fs = require("fs");
 const cors = require("cors");
 const mysqlConnection = require("./connection");
@@ -53,19 +52,15 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/seller/register", isNotLogin, require("./seller/account/register"));
+app.use("/seller/register", require("./seller/account/register"));
 
-app.use("/seller/login", isNotLogin, require("./seller/account/login"));
+app.use("/seller/login", require("./seller/account/login"));
 
-app.use("/seller/products", isLogin, require("./seller/products/products"));
+app.use("/seller/products", require("./seller/products/products"));
 
-app.use(
-  "/seller/catogories",
-  isLogin,
-  require("./seller/catogories/catogories")
-);
+app.use("/seller/catogories", require("./seller/catogories/catogories"));
 
-app.use("/seller/store", isLogin, require("./seller/account/store"));
+app.use("/seller/store", require("./seller/account/store"));
 
 app.get("/seller/loginstatus", (req, res) => {
   if (req.isAuthenticated()) {
@@ -78,7 +73,7 @@ app.get("/seller/loginstatus", (req, res) => {
   });
 });
 
-app.get("/seller/logout", isLogin, (req, res) => {
+app.get("/seller/logout", (req, res) => {
   req.logOut();
   res.json({ message: "succesfull Logggedout", login: false });
 });
@@ -91,7 +86,7 @@ function isLogin(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  return res.status(401).json({
+  return res.status(400).json({
     status: false,
     login: false,
     error: { message: "Please Login", code: 103 },

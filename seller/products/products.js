@@ -52,7 +52,13 @@ router.post("/", (req, res) => {
   let query = mysqlConnection.query(sql, product, (err, result) => {
     if (err)
       return res.status(500).json({ status: false, error: { message: err } });
-    return res.status(201).json({ status: true, login: true, data: product });
+    return res
+      .status(201)
+      .json({
+        status: true,
+        login: true,
+        data: { product_id: result.insertId },
+      });
   });
 });
 
