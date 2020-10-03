@@ -11,8 +11,9 @@ router.get("/", (req, res) => {
     FROM    products 
     LEFT JOIN    products_images
     ON      products_images.product_id = products.id
-    WHERE product_user=${req.user[0].id}
+  
     GROUP BY products.id`;
+  //  WHERE product_user=${req.user[0].id}
   //let sql = `SELECT *FROM products WHERE product_user=${req.user[0].id}`
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
@@ -52,13 +53,11 @@ router.post("/", (req, res) => {
   let query = mysqlConnection.query(sql, product, (err, result) => {
     if (err)
       return res.status(500).json({ status: false, error: { message: err } });
-    return res
-      .status(201)
-      .json({
-        status: true,
-        login: true,
-        data: { product_id: result.insertId },
-      });
+    return res.status(201).json({
+      status: true,
+      login: true,
+      data: { product_id: result.insertId },
+    });
   });
 });
 
