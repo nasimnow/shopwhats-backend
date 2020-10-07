@@ -7,20 +7,26 @@ const { Storage } = require("@google-cloud/storage");
 
 //get all products of current user
 router.get("/", (req, res) => {
+  let user = req.user.user;
   let sql = `SELECT  products.* , GROUP_CONCAT(product_image ORDER BY products_images.id) AS images
     FROM    products 
     LEFT JOIN    products_images
     ON      products_images.product_id = products.id
-  
+    WHERE product_user=${user.id}
     GROUP BY products.id`;
-  //  WHERE product_user=${req.user[0].id}
-  //let sql = `SELECT *FROM products WHERE product_user=${req.user[0].id}`
+  //let sql = `SELECT *FROM products WHERE product_user=${user[0].id}`
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
-      return res
-        .status(500)
-        .json({ message: { messageBody: err, status: false } });
-    return res.status(200).json({ status: true, login: true, data: results });
+      return res.json({
+        status_code: 500,
+        message: { messageBody: err, status: false },
+      });
+    return res.json({
+      status_code: 200,
+      status: true,
+      login: true,
+      data: results,
+    });
   });
 });
 
@@ -30,13 +36,22 @@ router.get("/:id", (req, res) => {
     FROM    products 
     LEFT JOIN    products_images
     ON      products_images.product_id = products.id
-    WHERE products.id =${req.params.id} AND products.product_user =${req.user[0].id}
+    WHERE products.id =${req.params.id} AND products.product_user =${user.id}
     GROUP BY products.id`;
-  //let sql = `SELECT *FROM products WHERE id =${req.params.id} AND product_user =${req.user[0].id}`
+  //let sql = `SELECT *FROM products WHERE id =${req.params.id} AND product_user =${user[0].id}`
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
-      return res.status(500).json({ status: false, error: { message: err } });
-    return res.status(200).json({ status: true, login: true, data: results });
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
+    return res.json({
+      status_code: 200,
+      status: true,
+      login: true,
+      data: results,
+    });
   });
 });
 
@@ -44,7 +59,7 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   let product = {
     product_name: req.body.product_name,
-    product_user: req.user[0].id,
+    product_user: user.id,
     product_price: req.body.product_price,
     product_desc: req.body.product_desc,
     product_cat: req.body.product_cat,
@@ -52,8 +67,13 @@ router.post("/", (req, res) => {
   let sql = "INSERT INTO products SET ?";
   let query = mysqlConnection.query(sql, product, (err, result) => {
     if (err)
-      return res.status(500).json({ status: false, error: { message: err } });
-    return res.status(201).json({
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
+    return res.json({
+      status_code: 201,
       status: true,
       login: true,
       data: { product_id: result.insertId },
@@ -70,35 +90,59 @@ router.put("/", (req, res) => {
     product_stock: req.body.product_stock,
     product_cat: req.body.product_cat,
   };
-  let sql = `UPDATE products  SET ? WHERE id =${req.body.id} AND product_user =${req.user[0].id} `;
+  console.log(user.id);
+  let sql = `UPDATE products  SET ? WHERE id =${req.body.id} AND product_user =${user.id} `;
   let query = mysqlConnection.query(sql, product, (err, result) => {
     if (err)
-      return res.status(500).json({ status: false, error: { message: err } });
-    return res.status(201).json({ status: true, login: true, data: product });
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
+    return res.json({
+      status_code: 201,
+      status: true,
+      login: true,
+      data: product,
+    });
   });
 });
 
 //delete specific product
 router.delete("/:id", (req, res) => {
-  let sql = `DELETE FROM products  WHERE id =${req.params.id} AND product_user =${req.user[0].id} `;
+  let sql = `DELETE FROM products  WHERE id =${req.params.id} AND product_user =${user.id} `;
   let query = mysqlConnection.query(sql, (err, result) => {
     if (err)
-      return res.status(500).json({ status: false, error: { message: err } });
-    return res
-      .status(201)
-      .json({ status: true, login: true, data: { id: req.params.id } });
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
+    return res.json({
+      status_code: 201,
+      status: true,
+      login: true,
+      data: { id: req.params.id },
+    });
   });
 });
 
 //flip product stock status
 router.put("/stock/:id", (req, res) => {
-  let sql = `UPDATE products  SET product_stock = NOT product_stock WHERE id=${req.params.id} AND product_user =${req.user[0].id}`;
+  let sql = `UPDATE products  SET product_stock = NOT product_stock WHERE id=${req.params.id} AND product_user =${user.id}`;
   let query = mysqlConnection.query(sql, (err, result) => {
     if (err)
-      return res.status(500).json({ status: false, error: { message: err } });
-    return res
-      .status(201)
-      .json({ status: true, login: true, data: { id: req.params.id } });
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
+    return res.json({
+      status_code: 201,
+      status: true,
+      login: true,
+      data: { id: req.params.id },
+    });
   });
 });
 
@@ -108,23 +152,37 @@ router.get("/catogories/:cat", (req, res) => {
     FROM    products 
     LEFT JOIN    products_images
     ON      products_images.product_id = products.id
-    WHERE products.product_cat =${req.params.cat} AND products.product_user =${req.user[0].id}
+    WHERE products.product_cat =${req.params.cat} AND products.product_user =${user.id}
     GROUP BY products.id`;
-  // let sql = `SELECT *FROM products WHERE product_cat =${req.params.cat} AND product_user =${req.user[0].id}`
+  // let sql = `SELECT *FROM products WHERE product_cat =${req.params.cat} AND product_user =${user[0].id}`
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
-      return res.status(500).json({ status: false, error: { message: err } });
-    return res.status(200).json({ status: true, login: true, data: results });
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
+    return res.json({
+      status_code: 200,
+      status: true,
+      login: true,
+      data: results,
+    });
   });
 });
 
 //get no of products under a catogory
 router.get("/catogories/no/:cat", (req, res) => {
-  let sql = `SELECT COUNT(*) AS count FROM products WHERE product_cat =${req.params.cat} AND product_user =${req.user[0].id}`;
+  let sql = `SELECT COUNT(*) AS count FROM products WHERE product_cat =${req.params.cat} AND product_user =${user.id}`;
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
-      return res.status(500).json({ status: false, error: { message: err } });
-    return res.status(200).json({
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
+    return res.json({
+      status_code: 200,
       status: true,
       login: true,
       data: { products_count: results[0].count },
