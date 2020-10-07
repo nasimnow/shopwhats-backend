@@ -4,7 +4,7 @@ const router = express.Router();
 
 //get all catogories of current user
 router.get("/", (req, res) => {
-  let sql = `SELECT *FROM catogories WHERE cat_user=${req.user[0].id}`;
+  let sql = `SELECT *FROM catogories WHERE cat_user=${req.user.user.id}`;
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
       return res.json({
@@ -20,6 +20,7 @@ router.get("/", (req, res) => {
     });
   });
 });
+
 //get all parent catogories
 router.get("/parent", (req, res) => {
   let sql = `SELECT *FROM catogories_main`;
@@ -58,7 +59,7 @@ router.get("/parent/:id", (req, res) => {
 });
 //get specific catogories by id
 router.get("/:id", (req, res) => {
-  let sql = `SELECT *FROM catogories WHERE id=${req.params.id} AND cat_user=${req.user[0].id}`;
+  let sql = `SELECT *FROM catogories WHERE id=${req.params.id} AND cat_user=${req.user.user.id}`;
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
       return res.json({
@@ -76,7 +77,7 @@ router.get("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-  let sql = `DELETE FROM catogories  WHERE id =${req.params.id} AND cat_user =${req.user[0].id} `;
+  let sql = `DELETE FROM catogories  WHERE id =${req.params.id} AND cat_user =${req.user.user.id} `;
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
       return res.json({
@@ -96,7 +97,7 @@ router.post("/", (req, res) => {
   let cat = {
     cat_name: req.body.cat_name,
     cat_parent: req.body.cat_parent,
-    cat_user: req.user[0].id,
+    cat_user: req.user.user.id,
   };
   let sql = "INSERT INTO catogories SET ?";
   let query = mysqlConnection.query(sql, cat, (err, result) => {
