@@ -39,6 +39,7 @@ router.get("/parent", (req, res) => {
     });
   });
 });
+
 //get parent catogory by id
 router.get("/parent/:id", (req, res) => {
   let sql = `SELECT *FROM catogories_main WHERE id=${req.params.id}`;

@@ -37,8 +37,9 @@ router.post("/", (req, res) => {
       if (await bcrypt.compare(req.body.password, user.account_password)) {
         console.log("settt");
 
-        jwt.sign({ user }, "secretkey", { expiresIn: "5m" }, (err, token) => {
+        jwt.sign({ user }, "secretkey", { expiresIn: "35m" }, (err, token) => {
           res.json({
+            status: true,
             token,
           });
         });
