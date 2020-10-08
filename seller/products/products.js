@@ -191,7 +191,7 @@ router.get("/catogories/no/:cat", (req, res) => {
 
 let storage = multer.diskStorage({
   destination: function (req, res, callback) {
-    let dir = "seller/products/images";
+    let dir = "/seller/products/images";
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
@@ -205,11 +205,13 @@ let storage = multer.diskStorage({
   },
 });
 
-router.post("/imageupload", (req, res, next) => {
+router.post("/imageupload", (req, res) => {
   let upload = multer({ storage: storage }).array("product_image", 6);
   upload(req, res, function (err) {
-    if (err)
+    if (err) {
+      console.log(err);
       return res.status(500).json({ status: false, error: { message: err } });
+    }
     return res.send("upload Finished");
   });
 });
