@@ -214,6 +214,14 @@ router.post("/imageupload", (req, res) => {
       return res.status(500).json({ status: false, error: { message: err } });
     }
     console.log(req.files);
+    let arrayDb = [];
+    req.files.map((file) => arrayDb.push([12, file.filename]));
+    let sql =
+      "INSERT INTO products_images (product_id, product_image) VALUES ?";
+    let query = mysqlConnection.query(sql, [arrayDb], (err, result) => {
+      if (err)
+        return res.status(500).json({ status: false, error: { message: err } });
+    });
     return res.send("upload Finished");
   });
 });
