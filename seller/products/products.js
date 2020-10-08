@@ -129,7 +129,7 @@ router.delete("/:id", (req, res) => {
 
 //flip product stock status
 router.put("/stock/:id", (req, res) => {
-  let sql = `UPDATE products  SET product_stock = NOT product_stock WHERE id=${req.params.id} AND product_user =${user.id}`;
+  let sql = `UPDATE products  SET product_stock = NOT product_stock WHERE id=${req.params.id} AND product_user =${req.user.user.id}`;
   let query = mysqlConnection.query(sql, (err, result) => {
     if (err)
       return res.json({
