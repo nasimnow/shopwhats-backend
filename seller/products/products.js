@@ -217,7 +217,7 @@ router.post("/imageupload", (req, res) => {
         error: { message: err },
       });
     }
-    console.log(req.files);
+
     let arrayDb = [];
     req.files.map((file) => arrayDb.push([12, file.filename]));
     let sql =
@@ -234,7 +234,7 @@ router.post("/imageupload", (req, res) => {
       status_code: 200,
       status: true,
       login: true,
-      data: { arrayDb },
+      data: { images: arrayDb },
     });
   });
 });
