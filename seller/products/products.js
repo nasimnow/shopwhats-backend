@@ -212,7 +212,7 @@ router.get("/catogories/no/:cat", (req, res) => {
 //     })
 // })
 
-const storage = new Storage({
+/*const storage = new Storage({
   projectId: "shopwhats-66d59",
   keyFilename:
     "./services/shopwhats-66d59-firebase-adminsdk-w4l15-98dbb653ba.json",
@@ -225,9 +225,9 @@ const bucket = storage.bucket("gs://shopwhats-66d59.appspot.com");
 const uploader = multer({
   storage: multer.memoryStorage(),
 });
-
+*/
 // Upload endpoint to send file to Firebase storage bucket
-router.post(
+/*router.post(
   "/uploadimage",
   uploader.array("product_image", 6),
   async (req, res, next) => {
@@ -298,6 +298,6 @@ const UploadStorageFirebase = (files, product_id) => {
     });
   });
   return prom;
-};
+};*/
 
 module.exports = router;
