@@ -213,6 +213,7 @@ router.post("/imageupload", (req, res) => {
       console.log(err);
       return res.status(500).json({ status: false, error: { message: err } });
     }
+    console.log(req.files);
     return res.send("upload Finished");
   });
 });
