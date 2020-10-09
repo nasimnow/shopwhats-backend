@@ -59,7 +59,7 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   let product = {
     product_name: req.body.product_name,
-    product_user: user.id,
+    product_user: req.user.user.id,
     product_price: req.body.product_price,
     product_desc: req.body.product_desc,
     product_cat: req.body.product_cat,
