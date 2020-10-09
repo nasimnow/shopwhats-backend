@@ -206,7 +206,7 @@ let storage = multer.diskStorage({
   },
 });
 
-router.post("/imageupload", (req, res) => {
+router.post("/imageupload/:pid", (req, res) => {
   let upload = multer({ storage: storage }).array("product_image", 6);
   upload(req, res, function (err) {
     if (err) {
@@ -219,7 +219,7 @@ router.post("/imageupload", (req, res) => {
     }
 
     let arrayDb = [];
-    req.files.map((file) => arrayDb.push([req.body.product_id, file.filename]));
+    req.files.map((file) => arrayDb.push([req.params.pid, file.filename]));
     let sql =
       "INSERT INTO products_images (product_id, product_image) VALUES ?";
     let query = mysqlConnection.query(sql, [arrayDb], (err, result) => {
