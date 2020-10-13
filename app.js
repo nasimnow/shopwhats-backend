@@ -65,7 +65,7 @@ app.get("/api/shop/:shop",(req,res)=>{
     
   }
 
-  res.send(midnight)
+  res.send(new Date())
 })
 function isLogin(req, res, next) {
 
