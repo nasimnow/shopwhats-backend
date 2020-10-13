@@ -65,7 +65,7 @@ app.get("/api/shop/:shop",(req,res)=>{
     
   }
 
-  res.send(new Date())
+  res.send(new Date().toLocaleString("en-US", {timeZone: "Asia/Calcutta"}))
 })
 function isLogin(req, res, next) {
 
