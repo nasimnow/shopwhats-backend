@@ -3,11 +3,12 @@ const fs = require("fs");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const app = express();
+var cookieParser = require('cookie-parser')
 
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-
+app.use(cookieParser())
 app.set("view-engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -45,8 +46,31 @@ app.get("/api/seller/logout", (req, res) => {
 app.get("/api/upload", (req, res) => {
   res.render("upload.ejs");
 });
+app.get("/shop/:shop",(req,res)=>{
+  var midnight = new Date();
+  
+  midnight.setHours(24,0,0,0)
 
+  let shop = req.params.shop
+  if(!req.cookies['viewlist']){
+    let arr = [shop]
+  res.cookie("viewlist", JSON.stringify(arr), {expires:midnight});
+  }
+  else{
+    let arr = JSON.parse(req.cookies['viewlist'])
+    if ( arr.indexOf(shop) == -1 ){
+       arr.push(shop)
+       res.cookie("viewlist", JSON.stringify(arr), {expires:midnight});
+      }
+    
+  }
+
+  res.send(midnight)
+})
 function isLogin(req, res, next) {
+
+  
+
   const bearerHeader = req.headers["authorization"];
   if (typeof bearerHeader !== "undefined") {
     const bearer = bearerHeader.split(" ")[1];
@@ -72,6 +96,8 @@ function isLogin(req, res, next) {
     });
   }
 }
+
+
 /*function isLogin(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
