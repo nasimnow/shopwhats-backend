@@ -46,7 +46,7 @@ app.get("/api/seller/logout", (req, res) => {
 app.get("/api/upload", (req, res) => {
   res.render("upload.ejs");
 });
-app.get("/shop/:shop",(req,res)=>{
+app.get("/api/shop/:shop",(req,res)=>{
   var midnight = new Date();
   
   midnight.setHours(24,0,0,0)
