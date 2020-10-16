@@ -32,7 +32,9 @@ router.post("/", (req, res) => {
   mysqlConnection.query(query, async (err, user) => {
     if (err) {
     }
+   
     user = user[0];
+
     if (user != "") {
       if (await bcrypt.compare(req.body.password, user.account_password)) {
         console.log("settt");
