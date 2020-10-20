@@ -19,7 +19,7 @@ app.use("/api/seller/register", require("./seller/account/register"));
 
 app.use("/api/seller/login", require("./seller/account/login"));
 
-app.use('/api/products/imageupload', express.static('public'))
+app.use('/api/products/images', express.static('public'))
 app.use("/api/seller/products", isLogin, require("./seller/products/products"));
 
 app.use(
