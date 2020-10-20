@@ -3,7 +3,8 @@ const fs = require("fs");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const app = express();
-var cookieParser = require('cookie-parser')
+var cookieParser = require('cookie-parser');
+const { raw } = require("mysql");
 
 const PORT = process.env.PORT || 3000;
 
@@ -19,7 +20,7 @@ app.use("/api/seller/register", require("./seller/account/register"));
 
 app.use("/api/seller/login", require("./seller/account/login"));
 
-app.get("/api/dir",()=>console.log(__dirname));
+app.get("/api/dir",(req,res)=>res.send(__dirname));
 
 app.use('/api/product-images',express.static(__dirname +'/api/product-images'));
 app.use("/api/seller/products", isLogin, require("./seller/products/products"));
