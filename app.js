@@ -18,7 +18,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/seller/register", require("./seller/account/register"));
 
 app.use("/api/seller/login", require("./seller/account/login"));
-console.log(__dirname);
+
+app.get("/dir",()=>console.log(__dirname));
+
 app.use('/api/product-images',express.static(__dirname +'/api/product-images'));
 app.use("/api/seller/products", isLogin, require("./seller/products/products"));
 
