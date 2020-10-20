@@ -192,7 +192,7 @@ router.get("/catogories/no/:cat", (req, res) => {
 
 let storage = multer.diskStorage({
   destination: function (req, res, callback) {
-    let dir = "/product-images";
+    let dir = "../product-images";
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
