@@ -3,26 +3,23 @@ const fs = require("fs");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const app = express();
-var cookieParser = require('cookie-parser');
-const { raw } = require("mysql");
+var cookieParser = require("cookie-parser");
 
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(cookieParser())
+app.use(cookieParser());
 app.set("view-engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-
 
 app.use("/api/seller/register", require("./seller/account/register"));
 
 app.use("/api/seller/login", require("./seller/account/login"));
 
-app.get("/api/dir",(req,res)=>res.send(__dirname));
+app.get("/api/dir", (req, res) => res.send(__dirname));
 
-app.use('/api/product-images',express.static(__dirname +'/product-images'));
+app.use("/api/product-images", express.static(__dirname + "/product-images"));
 app.use("/api/seller/products", isLogin, require("./seller/products/products"));
 
 app.use(
@@ -52,31 +49,26 @@ app.get("/api/seller/logout", (req, res) => {
 app.get("/api/upload", (req, res) => {
   res.render("upload.ejs");
 });
-app.get("/api/shop/:shop",(req,res)=>{
+app.get("/api/shop/:shop", (req, res) => {
   var midnight = new Date();
-  
-  midnight.setHours(24,0,0,0)
 
-  let shop = req.params.shop
-  if(!req.cookies['viewlist']){
-    let arr = [shop]
-  res.cookie("viewlist", JSON.stringify(arr), {expires:midnight});
-  }
-  else{
-    let arr = JSON.parse(req.cookies['viewlist'])
-    if ( arr.indexOf(shop) == -1 ){
-       arr.push(shop)
-       res.cookie("viewlist", JSON.stringify(arr), {expires:midnight});
-      }
-    
+  midnight.setHours(24, 0, 0, 0);
+
+  let shop = req.params.shop;
+  if (!req.cookies["viewlist"]) {
+    let arr = [shop];
+    res.cookie("viewlist", JSON.stringify(arr), { expires: midnight });
+  } else {
+    let arr = JSON.parse(req.cookies["viewlist"]);
+    if (arr.indexOf(shop) == -1) {
+      arr.push(shop);
+      res.cookie("viewlist", JSON.stringify(arr), { expires: midnight });
+    }
   }
 
-  res.send(midnight)
-})
+  res.send(midnight);
+});
 function isLogin(req, res, next) {
-
-  
-
   const bearerHeader = req.headers["authorization"];
   if (typeof bearerHeader !== "undefined") {
     const bearer = bearerHeader.split(" ")[1];
@@ -102,27 +94,5 @@ function isLogin(req, res, next) {
     });
   }
 }
-
-
-/*function isLogin(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  return res.status(400).json({
-    status: false,
-    login: false,
-    error: { message: "Please Login", code: 103 },
-  });
-}
-function isNotLogin(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.status(400).json({
-      status: false,
-      login: true,
-      error: { message: "Already Loginned", code: 104 },
-    });
-  }
-  return next();
-}*/
 
 app.listen(PORT);
