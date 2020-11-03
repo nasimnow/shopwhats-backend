@@ -4,7 +4,6 @@ const router = express.Router();
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
-const { Storage } = require("@google-cloud/storage");
 
 //get all products of current user
 router.get("/", (req, res) => {
@@ -238,93 +237,5 @@ router.post("/imageupload/:pid", (req, res) => {
     });
   });
 });
-
-/*const storage = new Storage({
-  projectId: "shopwhats-66d59",
-  keyFilename:
-    "./services/shopwhats-66d59-firebase-adminsdk-w4l15-98dbb653ba.json",
-});
-
-// Create a bucket associated to Firebase storage bucket
-const bucket = storage.bucket("gs://shopwhats-66d59.appspot.com");
-
-// Initiating a memory storage engine to store files as Buffer objects
-const uploader = multer({
-  storage: multer.memoryStorage(),
-});
-*/
-// Upload endpoint to send file to Firebase storage bucket
-/*router.post(
-  "/uploadimage",
-  uploader.array("product_image", 6),
-  async (req, res, next) => {
-    try {
-      if (req.files.length > 0) {
-        const response = await UploadStorageFirebase(
-          req.files,
-          req.body.product_id
-        );
-        return res.status(200).send(response);
-      }
-    } catch (error) {
-      console.log(error);
-      res.status(400).send(`Error, could not upload file: ${error}`);
-      return;
-    }
-  }
-);
-
-const UploadStorageFirebase = (files, product_id) => {
-  let prom = new Promise((_resolve, _reject) => {
-    let arrayFile = [];
-    let arrayDb = [];
-    if (!files) {
-      _reject("Not file");
-    }
-    files.map((filez) => {
-      let fileName = filez.originalname + Date.now();
-      // Create new blob in the bucket referencing the file
-      const blob = bucket.file(fileName);
-
-      // Create writable stream and specifying file mimetype
-      const blobWriter = blob.createWriteStream({
-        metadata: {
-          contentType: filez.mimetype,
-        },
-      });
-
-      blobWriter.on("error", (error) => {
-        _reject(error);
-      });
-
-      blobWriter.on("finish", () => {
-        // Assembling public URL for accessing the file via HTTP
-        const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
-          bucket.name
-        }/o/${encodeURI(blob.name)}?alt=media`;
-
-        // Return the file name and its public URL
-        arrayFile.push({
-          fileName,
-          fileLocation: publicUrl,
-        });
-        arrayDb.push([product_id, fileName]);
-        if (arrayFile.length == files.length) {
-          let sql =
-            "INSERT INTO products_images (product_id, product_image) VALUES ?";
-          let query = mysqlConnection.query(sql, [arrayDb], (err, result) => {
-            if (err)
-              return res
-                .status(500)
-                .json({ status: false, error: { message: err } });
-            _resolve(arrayFile);
-          });
-        }
-      });
-      blobWriter.end(filez.buffer);
-    });
-  });
-  return prom;
-};*/
 
 module.exports = router;

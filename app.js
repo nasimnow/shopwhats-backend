@@ -6,12 +6,21 @@ const app = express();
 var cookieParser = require("cookie-parser");
 
 const PORT = process.env.PORT || 3000;
+//cors plugin not working
+app.use(function (req, res, next) {
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
-app.use(cors());
 app.use(cookieParser());
 app.set("view-engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use("/api/client/store", require("./client/store"));
 
 app.use("/api/seller/register", require("./seller/account/register"));
 

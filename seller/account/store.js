@@ -10,6 +10,7 @@ router.get("/", (req, res) => {
       return res
         .status(500)
         .json({ message: { messageBody: err, status: false } });
+
     return res.status(201).json({ status: true, data: results });
   });
 });
