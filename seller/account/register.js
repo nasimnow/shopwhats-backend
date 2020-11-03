@@ -3,10 +3,6 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 
-router.get("/", (req, res) => {
-  res.render("register.ejs");
-});
-
 router.post("/", async (req, res) => {
   try {
     hashedPassword = await bcrypt.hash(req.body.account_password, 10);

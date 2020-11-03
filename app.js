@@ -1,10 +1,9 @@
 const express = require("express");
-const fs = require("fs");
-const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const app = express();
 var cookieParser = require("cookie-parser");
 
+require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 //cors plugin not working
 app.use(function (req, res, next) {
@@ -16,7 +15,6 @@ app.use(function (req, res, next) {
 });
 
 app.use(cookieParser());
-app.set("view-engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -55,9 +53,6 @@ app.get("/api/seller/logout", (req, res) => {
   res.json({ message: "succesfull Logggedout", login: false });
 });
 
-app.get("/api/upload", (req, res) => {
-  res.render("upload.ejs");
-});
 app.get("/api/shop/:shop", (req, res) => {
   var midnight = new Date();
 

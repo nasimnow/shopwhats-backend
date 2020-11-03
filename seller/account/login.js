@@ -14,11 +14,9 @@ router.post("/", (req, res) => {
     }
     if (user != null) {
       user = user[0];
-      console.log(user);
+
       if (user != "") {
         if (await bcrypt.compare(req.body.password, user.account_password)) {
-          console.log("settt");
-
           jwt.sign(
             { user },
             "secretkey",
