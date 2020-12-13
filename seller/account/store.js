@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/", (req, res) => {
+router.put("/", (req, res) => {
   let store = {
     account_store: req.body.account_store,
     account_whatsapp: req.body.account_whatsapp,
