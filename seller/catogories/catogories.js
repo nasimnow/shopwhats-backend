@@ -26,6 +26,25 @@ router.get("/", (req, res) => {
   });
 });
 
+//get count of all catogories of a user
+router.get("/count", (req, res) => {
+  let sql = `SELECT COUNT(*) AS category_count FROM catogories WHERE cat_user=${req.user.user.id}`;
+
+  let query = mysqlConnection.query(sql, (err, results) => {
+    if (err)
+      return res.json({
+        status_code: 500,
+        message: { messageBody: err, status: false },
+      });
+    return res.json({
+      status_code: 200,
+      status: true,
+      login: true,
+      data: results,
+    });
+  });
+});
+
 //get all parent catogories
 router.get("/parent", (req, res) => {
   let sql = `SELECT *FROM catogories_main`;

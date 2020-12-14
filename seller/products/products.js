@@ -29,6 +29,24 @@ router.get("/", (req, res) => {
   });
 });
 
+//get count of all products of a user
+router.get("/count", (req, res) => {
+  let sql = `SELECT COUNT(*) AS product_count FROM products WHERE product_user=${req.user.user.id}`;
+
+  let query = mysqlConnection.query(sql, (err, results) => {
+    if (err)
+      return res.json({
+        status_code: 500,
+        message: { messageBody: err, status: false },
+      });
+    return res.json({
+      status_code: 200,
+      status: true,
+      login: true,
+      data: results,
+    });
+  });
+});
 //get specific product
 router.get("/:id", (req, res) => {
   let sql = `SELECT  products.* , GROUP_CONCAT(product_image ORDER BY products_images.id) AS images
