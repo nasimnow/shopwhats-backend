@@ -17,8 +17,7 @@ router.get("/", (req, res) => {
 
 //return the details of current loginned user
 router.get("/user", (req, res) => {
-  let userInfo = req.user;
-  let { account_password, ...userInfo } = userInfo;
+  let { account_password, ...userInfo } = req.user;
   return res.status(201).json({ status: true, data: userInfo });
 });
 //update store detaisl
