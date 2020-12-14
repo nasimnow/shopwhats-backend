@@ -15,6 +15,11 @@ router.get("/", (req, res) => {
   });
 });
 
+//return the details of current loginned user
+router.get("/user", (req, res) => {
+  return res.status(201).json({ status: true, data: req.user });
+});
+//update store detaisl
 router.put("/", (req, res) => {
   let store = {
     account_store: req.body.account_store,
