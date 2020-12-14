@@ -4,7 +4,12 @@ const router = express.Router();
 
 //get all catogories of current user
 router.get("/", (req, res) => {
-  let sql = `SELECT *FROM catogories WHERE cat_user=${req.user.user.id}`;
+  //let sql = `SELECT * FROM catogories WHERE cat_user=${req.user.user.id} `;
+  let sql = `SELECT * FROM catogories c LEFT JOIN
+  (SELECT product_cat, COUNT(*) AS productCount
+    FROM products
+    GROUP BY product_cat) p
+    ON c.id = p.product_cat`;
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
       return res.json({
@@ -76,7 +81,7 @@ router.get("/:id", (req, res) => {
     });
   });
 });
-
+//delete a specif catogory by id
 router.delete("/:id", (req, res) => {
   let sql = `DELETE FROM catogories  WHERE id =${req.params.id} AND cat_user =${req.user.user.id} `;
   let query = mysqlConnection.query(sql, (err, results) => {
@@ -111,7 +116,7 @@ router.post("/", (req, res) => {
     return res.json({ status_code: 201, status: true, login: true, data: cat });
   });
 });
-
+//update a catogory by id
 router.put("/", (req, res) => {
   let cat = { cat_name: req.body.cat_name, cat_parent: req.body.cat_parent };
   let sql = `UPDATE catogories SET ? WHERE id=${req.body.id}`;
