@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/", (req, res) => {
   //let sql = `SELECT * FROM catogories WHERE cat_user=${req.user.user.id} `;
   let sql = `SELECT * FROM catogories c LEFT JOIN
-  (SELECT product_cat, COUNT(*) AS productCount
+  (SELECT product_cat, COUNT(*) AS product_count
     FROM products
     GROUP BY product_cat) p
     ON c.id = p.product_cat`;
