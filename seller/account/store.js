@@ -18,7 +18,7 @@ router.get("/", (req, res) => {
 //return the details of current loginned user
 router.get("/user", (req, res) => {
   let userInfo = req.user;
-  delete userInfo.account_password;
+  let { account_password, ...userInfo } = userInfo;
   return res.status(201).json({ status: true, data: userInfo });
 });
 //update store detaisl
