@@ -31,8 +31,8 @@ router.get("/", (req, res) => {
 
 //get count of all products of a user
 router.get("/count", (req, res) => {
-  let sql = `select (select count(*) from products) as products_count  WHERE product_user=${req.user.user.id},
-  (select count(*) from catogories) as cat_count  WHERE cat_user=${req.user.user.id}`;
+  let sql = `select (select count(*) from products WHERE product_user=${req.user.user.id}) as products_count  ,
+  (select count(*) from catogories WHERE cat_user=${req.user.user.id}) as cat_count  `;
 
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
