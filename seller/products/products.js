@@ -210,57 +210,6 @@ router.get("/catogories/no/:cat", (req, res) => {
   });
 });
 
-let profileStorage = multer.diskStorage({
-  destination: function (req, res, callback) {
-    let dir = "./profile-images";
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
-    callback(null, dir);
-  },
-  filename: function (req, file, callback) {
-    callback(
-      null,
-      file.fieldname + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
-
-//upload user store profile image to server
-router.post("/profile-upload/", (req, res) => {
-  let upload = multer({ storage: profileStorage }).single("profile_image");
-  upload(req, res, function (err) {
-    if (err) {
-      console.log(err);
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    }
-    let account_store_image = req.file.filename;
-    let sql = `UPDATE account SET ? WHERE id=${req.user.user.id}`;
-    let query = mysqlConnection.query(
-      sql,
-      { account_store_image },
-      (err, result) => {
-        if (err)
-          return res.json({
-            status_code: 500,
-            status: false,
-            error: { message: err },
-          });
-      }
-    );
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: { profile_image: account_store_image },
-    });
-  });
-});
-
 let productStorage = multer.diskStorage({
   destination: function (req, res, callback) {
     let dir = "./product-images";

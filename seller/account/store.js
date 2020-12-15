@@ -1,10 +1,13 @@
 const mysqlConnection = require("../../connection");
 const express = require("express");
 const router = express.Router();
+const fs = require("fs");
+const path = require("path");
+const multer = require("multer");
 
-//get all catogories of current user
+//get all detals about loginned user
 router.get("/", (req, res) => {
-  let sql = `SELECT id,account_store,account_whatsapp,account_store_link,account_store_status,account_store_desc,account_store_address	 FROM account WHERE id=${req.user.user.id}`;
+  let sql = `SELECT id,account_store,account_store_image,account_whatsapp,account_store_link,account_store_status,account_store_desc,account_store_address	 FROM account WHERE id=${req.user.user.id}`;
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
       return res
@@ -40,6 +43,59 @@ router.put("/", (req, res) => {
         status: true,
         login: true,
       },
+    });
+  });
+});
+
+let profileStorage = multer.diskStorage({
+  destination: function (req, res, callback) {
+    let dir = "./profile-images";
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    callback(null, dir);
+  },
+  filename: function (req, file, callback) {
+    callback(
+      null,
+      file.fieldname + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+//upload user store profile image to server
+router.post("/profile-upload/", (req, res) => {
+  let upload = multer({ storage: profileStorage }).single(
+    "account_store_image"
+  );
+  upload(req, res, function (err) {
+    if (err) {
+      console.log(err);
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
+    }
+    let account_store_image = req.file.filename;
+    let sql = `UPDATE account SET ? WHERE id=${req.user.user.id}`;
+    let query = mysqlConnection.query(
+      sql,
+      { account_store_image },
+      (err, result) => {
+        if (err)
+          return res.json({
+            status_code: 500,
+            status: false,
+            error: { message: err },
+          });
+      }
+    );
+    return res.json({
+      status_code: 200,
+      status: true,
+      login: true,
+      data: { profile_image: account_store_image },
     });
   });
 });

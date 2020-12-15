@@ -28,6 +28,7 @@ app.use("/api/seller/login", require("./seller/account/login"));
 app.get("/api/dir", (req, res) => res.send(__dirname));
 
 app.use("/api/product-images", express.static(__dirname + "/product-images"));
+app.use("/api/profile-images", express.static(__dirname + "/profile-images"));
 app.use("/api/seller/products", isLogin, require("./seller/products/products"));
 
 app.use(
