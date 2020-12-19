@@ -6,6 +6,7 @@ const path = require("path");
 const multer = require("multer");
 
 //get all products of current user
+//send image id with images after imagname:imageid
 router.get("/", (req, res) => {
   let sql = `SELECT  products.* , GROUP_CONCAT(products_images.product_image, ':',products_images.product_id  ORDER BY products_images.id) AS images
     FROM    products 
@@ -50,7 +51,7 @@ router.get("/count", (req, res) => {
 });
 //get specific product
 router.get("/:id", (req, res) => {
-  let sql = `SELECT  products.* , GROUP_CONCAT(product_image ORDER BY products_images.id) AS images
+  let sql = `SELECT  products.* , GROUP_CONCAT(products_images.product_image, ':',products_images.product_id  ORDER BY products_images.id) AS images
     FROM    products 
     LEFT JOIN    products_images
     ON      products_images.product_id = products.id
@@ -111,8 +112,9 @@ router.put("/", (req, res) => {
     product_cat: req.body.product_cat,
   };
 
-  let sql = `UPDATE products  SET ? WHERE id =${req.body.id} AND product_user =${req.user.user.id} `;
+  let sql = `UPDATE products  SET ? WHERE id =${req.body.id} AND product_user =${req.user.user.id}`;
   let query = mysqlConnection.query(sql, product, (err, result) => {
+    //get images from product from
     if (err)
       return res.json({
         status_code: 500,
@@ -256,6 +258,27 @@ router.post("/imageupload/:pid", (req, res) => {
       status: true,
       login: true,
       data: { images: arrayDb },
+    });
+  });
+});
+
+//remove already uploaded image from database
+router.post("/imageDelete/:pid", (req, res) => {
+  let imagesTodelete = req.body.images_delete;
+  let sql = `DELETE FROM products_images WHERE product_id=${req.params.pid} AND id NOT
+IN(‘yourValue1’)`;
+  let query = mysqlConnection.query(sql, product, (err, result) => {
+    if (err)
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
+    return res.json({
+      status_code: 201,
+      status: true,
+      login: true,
+      data: result,
     });
   });
 });
