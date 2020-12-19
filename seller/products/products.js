@@ -8,7 +8,7 @@ const multer = require("multer");
 //get all products of current user
 //send image id with images after imagname:imageid
 router.get("/", (req, res) => {
-  let sql = `SELECT  products.* , GROUP_CONCAT(products_images.product_image, ':',products_images.product_id  ORDER BY products_images.id) AS images
+  let sql = `SELECT  products.* , GROUP_CONCAT(products_images.product_image, ':',products_images.id  ORDER BY products_images.id) AS images
     FROM    products 
     LEFT JOIN    products_images
     ON      products_images.product_id = products.id
@@ -51,7 +51,7 @@ router.get("/count", (req, res) => {
 });
 //get specific product
 router.get("/:id", (req, res) => {
-  let sql = `SELECT  products.* , GROUP_CONCAT(products_images.product_image, ':',products_images.product_id  ORDER BY products_images.id) AS images
+  let sql = `SELECT  products.* , GROUP_CONCAT(products_images.product_image, ':',products_images.id  ORDER BY products_images.id) AS images
     FROM    products 
     LEFT JOIN    products_images
     ON      products_images.product_id = products.id
