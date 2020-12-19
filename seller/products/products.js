@@ -7,8 +7,7 @@ const multer = require("multer");
 
 //get all products of current user
 router.get("/", (req, res) => {
-  let sql = `SELECT  products.* , GROUP_CONCAT(product_image ORDER BY products_images.id) AS images
-    FROM    products ,GROUP_CONCAT(id ORDER BY products_images.id) AS image_id
+  let sql = `SELECT  products.* , GROUP_CONCAT(product_image,:,id ORDER BY products_images.id) AS images
     FROM    products 
     LEFT JOIN    products_images
     ON      products_images.product_id = products.id
