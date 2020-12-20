@@ -8,8 +8,8 @@ router.get("/", (req, res) => {
   let sql = `SELECT * FROM catogories c LEFT JOIN
   (SELECT product_cat, COUNT(*) AS product_count
     FROM products
-    GROUP BY product_cat) p
-    ON c.id = p.product_cat`;
+    GROUP BY product_cat) p 
+    ON c.id = p.product_cat WHERE cat_user=${req.user.user.id}`;
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
       return res.json({
