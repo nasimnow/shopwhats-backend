@@ -268,8 +268,7 @@ router.post("/imageDelete/:pid", (req, res) => {
   console.log(req.body);
   let sql = `DELETE FROM products_images WHERE product_id=${
     req.params.pid
-  } AND id NOT
-IN(${imagesTodelete.join(",")})`;
+  } AND id IN(${imagesTodelete.join(",")})`;
   let query = mysqlConnection.query(sql, (err, result) => {
     if (err)
       return res.json({
