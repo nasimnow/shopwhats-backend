@@ -266,9 +266,11 @@ router.post("/imageupload/:pid", (req, res) => {
 router.post("/imageDelete/:pid", (req, res) => {
   let imagesTodelete = req.body.images_delete;
   console.log(req.body);
-  let sql = `DELETE FROM products_images WHERE product_id=${req.params.pid} AND id NOT
-IN(...imagesToDelete)`;
-  let query = mysqlConnection.query(sql, product, (err, result) => {
+  let sql = `DELETE FROM products_images WHERE product_id=${
+    req.params.pid
+  } AND id NOT
+IN(${imagesTodelete.join(",")})`;
+  let query = mysqlConnection.query(sql, (err, result) => {
     if (err)
       return res.json({
         status_code: 500,
