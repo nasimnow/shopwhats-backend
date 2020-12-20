@@ -6,7 +6,7 @@ const path = require("path");
 const multer = require("multer");
 
 //get all products of current user
-//send image id with images after imagname:imageid
+//returning images id with images after imagname:imageid
 router.get("/", (req, res) => {
   let sql = `SELECT  products.* , GROUP_CONCAT(products_images.product_image, ':',products_images.id  ORDER BY products_images.id) AS images
     FROM    products 
@@ -266,7 +266,7 @@ router.post("/imageupload/:pid", (req, res) => {
 router.post("/imageDelete/:pid", (req, res) => {
   let imagesTodelete = req.body.images_delete;
   let sql = `DELETE FROM products_images WHERE product_id=${req.params.pid} AND id NOT
-IN(‘yourValue1’)`;
+IN(...imagesToDelete)`;
   let query = mysqlConnection.query(sql, product, (err, result) => {
     if (err)
       return res.json({
