@@ -7,44 +7,50 @@ const jwt = require("jsonwebtoken");
 router.post("/", (req, res) => {
   let query = `SELECT * FROM account WHERE account_phone ='${req.body.phone}'`;
   mysqlConnection.query(query, async (err, user) => {
+    //checks for any mysql error if return error
     if (err) {
-      return res
-        .status(500)
-        .json({ status_code: 500, status: false, error: { message: err } });
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
     }
-    if (user != null) {
-      user = user[0];
+    //check if mysql has return null or empty
+    if (user == null || user[0] == "") {
+      return res.json({
+        status_code: 400,
+        status: false,
+        login: false,
+        error: { message: "Check your credentials", code: 101 },
+      });
+    }
+    user = user[0];
 
-      if (user != "") {
-        if (await bcrypt.compare(req.body.password, user.account_password)) {
-          jwt.sign(
-            { user },
-            "secretkey",
-            { expiresIn: "25m" },
-            (err, token) => {
-              res.json({
-                status: true,
-                token,
-              });
-            }
-          );
-        } else {
-          return res.json({
-            status_code: 400,
-            status: false,
-            login: false,
-            error: { message: "Check your credentials", code: 101 },
-          });
-        }
-      } else {
+    //compare user typed password and password in db
+    if (!(await bcrypt.compare(req.body.password, user.account_password))) {
+      return res.json({
+        status_code: 400,
+        status: false,
+        login: false,
+        error: { message: "Check your credentials", code: 101 },
+      });
+    }
+
+    //credentials validated and generates jwt token
+    jwt.sign({ user }, "secretkey", { expiresIn: "14d" }, (err, token) => {
+      if (err) {
         return res.json({
-          status_code: 400,
+          status_code: 500,
           status: false,
           login: false,
           error: { message: "Check your credentials", code: 101 },
         });
       }
-    }
+      return res.json({
+        status: true,
+        token,
+      });
+    });
   });
 });
 module.exports = router;
