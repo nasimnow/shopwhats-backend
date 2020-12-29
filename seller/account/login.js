@@ -32,7 +32,7 @@ router.post("/", (req, res) => {
         status_code: 400,
         status: false,
         login: false,
-        error: { message: "Check your credentials", code: 101 },
+        error: { message: "Check your credentials", code: 102 },
       });
     }
 
@@ -43,7 +43,7 @@ router.post("/", (req, res) => {
           status_code: 500,
           status: false,
           login: false,
-          error: { message: "Check your credentials", code: 101 },
+          error: { message: "Check your credentials", code: 109 },
         });
       }
       return res.json({
