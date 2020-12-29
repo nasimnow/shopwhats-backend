@@ -9,9 +9,12 @@ const PORT = process.env.PORT || 5000;
 app.use(function (req, res, next) {
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept,Authorization"
   );
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS");
+
   next();
 });
 
@@ -52,7 +55,7 @@ app.get("/api/seller/loginstatus", (req, res) => {
 
 app.get("/api/seller/logout", (req, res) => {
   req.logOut();
-  res.json({ message: "succesfull Logggedout", login: false });
+  return res.json({ message: "succesfull Logggedout", login: false });
 });
 
 app.get("/api/shop/:shop", (req, res) => {

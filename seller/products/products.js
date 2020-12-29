@@ -76,23 +76,21 @@ router.get("/:id", (req, res) => {
 
 //add new product
 router.post("/", (req, res) => {
+  console.log(req.body);
   let product = {
-    product_name: req.body.product_name,
     product_user: req.user.user.id,
-    product_price: req.body.product_price,
-    product_sale_price: req.body.product_sale_price,
-    product_desc: req.body.product_desc,
-    product_cat: req.body.product_cat,
+    ...req.body,
   };
   let sql = "INSERT INTO products SET ?";
   let query = mysqlConnection.query(sql, product, (err, result) => {
-    if (err)
+    if (err) {
       return res.json({
         status_code: 500,
         status: false,
         error: { message: err },
       });
-    return res.json({
+    }
+    res.json({
       status_code: 201,
       status: true,
       login: true,
@@ -106,6 +104,7 @@ router.put("/", (req, res) => {
   let product = {
     product_name: req.body.product_name,
     product_price: req.body.product_price,
+    product_is_sale: req.body.product_is_sale,
     product_sale_price: req.body.product_sale_price,
     product_desc: req.body.product_desc,
     product_stock: req.body.product_stock,
@@ -252,12 +251,12 @@ router.post("/imageupload/:pid", (req, res) => {
           status: false,
           error: { message: err },
         });
-    });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: { images: arrayDb },
+      return res.json({
+        status_code: 200,
+        status: true,
+        login: true,
+        data: { images: arrayDb },
+      });
     });
   });
 });

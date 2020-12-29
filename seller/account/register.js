@@ -20,12 +20,12 @@ router.post("/", async (req, res) => {
         let sql = "INSERT INTO account SET ?";
         let query = mysqlConnection.query(sql, account, (err, result) => {
           if (err)
-            res.json({
+            return res.json({
               status_code: 500,
               status: false,
               error: { message: err },
             });
-          res.json({
+          return res.json({
             status_code: 201,
             status: true,
             login: false,
@@ -34,7 +34,7 @@ router.post("/", async (req, res) => {
         });
       },
       () => {
-        res.json({
+        return res.json({
           status_code: 400,
           status: false,
           login: false,

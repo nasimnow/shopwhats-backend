@@ -16,7 +16,9 @@ router.post("/", (req, res) => {
       });
     }
     //check if mysql has return null or empty
-    if (user == null || user[0] == "") {
+    console.log(user.length);
+    if (user.length < 1) {
+      console.log("entered");
       return res.json({
         status_code: 400,
         status: false,
@@ -24,6 +26,7 @@ router.post("/", (req, res) => {
         error: { message: "Check your credentials", code: 101 },
       });
     }
+    console.log(JSON.stringify(user));
     user = user[0];
 
     //compare user typed password and password in db
