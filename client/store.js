@@ -66,7 +66,7 @@ router.get("/products/:id/:cat", (req, res) => {
     FROM    products 
     LEFT JOIN    products_images
     ON      products_images.product_id = products.id
-    WHERE products.product_cat =${req.params.cat} AND product_stock !=0 AND WHERE product_user='${req.params.id}'
+    WHERE products.product_cat ='${req.params.cat}' AND product_stock !=0 AND WHERE product_user='${req.params.id}'
     GROUP BY products.id`;
 
   let query = mysqlConnection.query(
