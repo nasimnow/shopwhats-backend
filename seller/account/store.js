@@ -5,9 +5,9 @@ const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
 
-//get all detals about loginned user
+//get all details about loginned user
 router.get("/", (req, res) => {
-  let sql = `SELECT id,account_store,account_store_image,account_whatsapp,account_store_link,account_store_status,account_store_desc,account_store_address	 FROM account WHERE id=${req.user.user.id}`;
+  let sql = `SELECT id,account_store,account_store_image,account_whatsapp,account_store_link,account_store_status,account_store_desc,account_store_address FROM account WHERE id=${req.user.user.id}`;
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
       return res
@@ -23,7 +23,7 @@ router.get("/user", (req, res) => {
   let { account_password, ...userInfo } = req.user.user;
   return res.status(201).json({ status: true, data: userInfo });
 });
-//update store detaisl
+//update store details
 router.put("/", (req, res) => {
   let store = {
     account_store: req.body.account_store,
