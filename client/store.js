@@ -53,13 +53,40 @@ router.get("/products/single/:id", (req, res) => {
 });
 
 //add store viewers analytics
-router.get("/api/shop/:shop", (req, res) => {
+router.get("/api/shop/:shopId", (req, res) => {
   var midnight = new Date();
 
   midnight.setHours(24, 0, 0, 0);
 
-  let shop = req.params.shop;
+  let shop = req.params.shopId;
   if (!req.cookies["viewlist"]) {
+    let today = new Date();
+    let todayDate =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    let sql = `SELECT COUNT(*) AS count  FROM store_analytics WHERE user_id=${shop} AND date= ${todayDate}`;
+    let query = mysqlConnection.query(sql, (err, result) => {
+      if (result[0].count == 0) {
+        let analyticsData = {
+          user_id: shop,
+          store_views: 1,
+          message_clicks: 0,
+        };
+        let sqlAdd = `INSERT INTO store_analytics SET ?`;
+        mysqlConnection.query(sqlAdd, analyticsData, (err, result) => {
+          if (err) console.log(err);
+        });
+      } else {
+        let sqlAdd = `UPDATE store_analytics SET store_views = store_views+1 `;
+        mysqlConnection.query(sqlAdd, (err, result) => {
+          if (err) console.log(err);
+        });
+      }
+    });
+
     let arr = [shop];
     res.cookie("viewlist", JSON.stringify(arr), { expires: midnight });
   } else {

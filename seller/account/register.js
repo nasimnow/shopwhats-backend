@@ -6,7 +6,6 @@ const bcrypt = require("bcrypt");
 router.post("/", async (req, res) => {
   try {
     hashedPassword = await bcrypt.hash(req.body.account_password, 10);
-
     checkUser(
       req.body.account_phone,
       req.body.account_store,
