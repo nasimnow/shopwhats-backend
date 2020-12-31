@@ -10,6 +10,7 @@ router.post("/", async (req, res) => {
     checkUser(
       req.body.account_phone,
       req.body.account_store,
+      //callback for registering user if all requirments met
       (store_new) => {
         let account = {
           account_phone: req.body.account_phone,
@@ -55,9 +56,10 @@ function checkUser(phone, store, addUser, registerd) {
 }
 
 function checkLink(store, addUser) {
-  let sql = `SELECT COUNT(*) AS count  FROM account WHERE account_store='${store}'`;
+  let sql = `SELECT COUNT(*) AS count  FROM account WHERE account_store_link='${store}'`;
   let query = mysqlConnection.query(sql, (err, result) => {
     if (result[0].count == 0) {
+      console.log(store);
       addUser(store);
     } else {
       let newStore = store + Math.floor(Math.random() * (999 - 100 + 1) + 100);

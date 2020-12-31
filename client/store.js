@@ -52,6 +52,27 @@ router.get("/products/single/:id", (req, res) => {
   });
 });
 
+//add store viewers analytics
+router.get("/api/shop/:shop", (req, res) => {
+  var midnight = new Date();
+
+  midnight.setHours(24, 0, 0, 0);
+
+  let shop = req.params.shop;
+  if (!req.cookies["viewlist"]) {
+    let arr = [shop];
+    res.cookie("viewlist", JSON.stringify(arr), { expires: midnight });
+  } else {
+    let arr = JSON.parse(req.cookies["viewlist"]);
+    if (arr.indexOf(shop) == -1) {
+      arr.push(shop);
+      res.cookie("viewlist", JSON.stringify(arr), { expires: midnight });
+    }
+  }
+
+  res.send(midnight);
+});
+
 //get all instock products of user
 router.get("/products/:id/:cat", (req, res) => {
   let sqlAll = `SELECT  products.* , GROUP_CONCAT(product_image ORDER BY products_images.id) AS images
