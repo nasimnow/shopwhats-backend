@@ -53,7 +53,7 @@ router.get("/products/single/:id", (req, res) => {
 });
 
 //add store viewers analytics
-router.get("/api/shop/:shopId", (req, res) => {
+router.get("/analytics/:shopId", (req, res) => {
   var midnight = new Date();
 
   midnight.setHours(24, 0, 0, 0);
