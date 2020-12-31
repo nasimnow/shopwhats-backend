@@ -15,7 +15,8 @@ router.post("/", async (req, res) => {
         let account = {
           account_phone: req.body.account_phone,
           account_password: hashedPassword,
-          account_store: store_new,
+          account_store: req.body.account_store,
+          account_store_link: store_new,
           account_whatsapp: req.body.account_phone,
         };
         let sql = "INSERT INTO account SET ?";
