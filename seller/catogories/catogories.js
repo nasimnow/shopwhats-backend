@@ -118,6 +118,8 @@ router.delete("/:id", (req, res) => {
     });
   });
 });
+
+//add new Category
 router.post("/", (req, res) => {
   let cat = {
     cat_name: req.body.cat_name,

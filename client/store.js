@@ -1,7 +1,6 @@
 const mysqlConnection = require("../connection");
 const express = require("express");
 const router = express.Router();
-const moment = require("moment");
 
 //get all details of current store user
 router.get("/:store", (req, res) => {
@@ -166,6 +165,30 @@ router.get("/products/:id/:cat", (req, res) => {
       });
     }
   );
+});
+
+// search products from store
+router.get("/search/products/:storeId/:keyword", (req, res) => {
+  let sqlSearch = `SELECT  products.* , GROUP_CONCAT(product_image ORDER BY products_images.id) AS images
+    FROM    products 
+    LEFT JOIN    products_images
+    ON      products_images.product_id = products.id
+    WHERE product_user='${req.params.storeId}' AND product_stock !=0 AND product_name LIKE '%${req.params.keyword}%'
+    GROUP BY products.id`;
+  let query = mysqlConnection.query(sqlSearch, (err, results) => {
+    console.log(sqlSearch);
+    if (err)
+      return res.json({
+        status_code: 500,
+        message: { messageBody: err, status: false },
+      });
+    return res.json({
+      status_code: 200,
+      status: true,
+      login: true,
+      data: results,
+    });
+  });
 });
 
 module.exports = router;
