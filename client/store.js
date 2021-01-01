@@ -54,7 +54,7 @@ router.get("/products/single/:id", (req, res) => {
 });
 
 //add store viewers analytics
-router.get("/analytics/:shopId", (req, res) => {
+router.get("/analytics/storeviews/:shopId", (req, res) => {
   console.log("hi");
   console.log(req);
   let midnight = new Date();
@@ -86,7 +86,6 @@ const addAnalytics = (shop) => {
   let sql = `SELECT COUNT(*) AS count  FROM store_analytics WHERE user_id=${shop} AND date='${todayDate}'`;
   mysqlConnection.query(sql, (err, result) => {
     if (err) console.log(err);
-    console.log(result);
     if (result[0].count == 0) {
       let analyticsData = {
         user_id: shop,
@@ -96,17 +95,43 @@ const addAnalytics = (shop) => {
       let sqlAdd = `INSERT INTO store_analytics SET ?`;
       mysqlConnection.query(sqlAdd, analyticsData, (err, result) => {
         if (err) console.log(err);
-        console.log(result);
       });
     } else {
       let sqlAdd = `UPDATE store_analytics SET store_views = store_views+1  WHERE user_id=${shop} AND date='${todayDate}' `;
       mysqlConnection.query(sqlAdd, (err, result) => {
         if (err) console.log(err);
-        console.log(result);
       });
     }
   });
 };
+
+//update store whatsapp button clicks
+router.get("/analytics/messagecount/:shopId", (req, res) => {
+  let today = new Date();
+  let todayDate =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  let shop = req.params.shopId;
+  let sql = `SELECT COUNT(*) AS count  FROM store_analytics WHERE user_id=${shop} AND date='${todayDate}'`;
+  mysqlConnection.query(sql, (err, result) => {
+    if (err) console.log(err);
+    if (result[0].count == 0) {
+      let analyticsData = {
+        user_id: shop,
+        store_views: 1,
+        message_clicks: 1,
+      };
+      let sqlAdd = `INSERT INTO store_analytics SET ?`;
+      mysqlConnection.query(sqlAdd, analyticsData, (err, result) => {
+        if (err) console.log(err);
+      });
+    } else {
+      let sqlAdd = `UPDATE store_analytics SET message_clicks = message_clicks+1  WHERE user_id=${shop} AND date='${todayDate}' `;
+      mysqlConnection.query(sqlAdd, (err, result) => {
+        if (err) console.log(err);
+      });
+    }
+  });
+});
 
 //get all instock products of user
 router.get("/products/:id/:cat", (req, res) => {
