@@ -4,6 +4,7 @@ const router = express.Router();
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
+const moment = require("moment");
 
 //get all products of current user
 //returning images id with images after imagname:imageid
@@ -32,8 +33,9 @@ router.get("/", (req, res) => {
 
 //get count of all products of a user
 router.get("/count", (req, res) => {
+  const today = moment().format("YYYY-MM-DD");
   let sql = `select (select count(*) from products WHERE product_user=${req.user.user.id}) as products_count  ,
-  (select count(*) from catogories WHERE cat_user=${req.user.user.id}) as cat_count ,(select store_views from store_analytics WHERE user_id=${req.user.user.id}) as store_views,(select message_clicks from store_analytics WHERE user_id=${req.user.user.id}) as message_clicks`;
+  (select count(*) from catogories WHERE cat_user=${req.user.user.id} AND date) as cat_count ,(select store_views from store_analytics WHERE user_id=${req.user.user.id} AND date=${today}) as store_views,(select message_clicks from store_analytics WHERE user_id=${req.user.user.id} AND date=${today}) as message_clicks`;
 
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
