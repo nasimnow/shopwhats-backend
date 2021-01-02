@@ -45,7 +45,7 @@ router.get("/count", (req, res) => {
   } AND date='${today.toString()}') as store_views,(select message_clicks from store_analytics WHERE user_id=${
     req.user.user.id
   } AND date='${today}') as message_clicks`;
-
+  console.log(sql);
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
       return res.json({
