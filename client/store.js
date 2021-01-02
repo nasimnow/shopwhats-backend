@@ -54,13 +54,11 @@ router.get("/products/single/:id", (req, res) => {
 
 //add store viewers analytics
 router.get("/analytics/storeviews/:shopId", (req, res) => {
-  console.log("hi");
-  console.log(req);
   let midnight = new Date();
   midnight.setDate(midnight.getDate() + 1);
   midnight.setUTCHours(0, 0, 0, 0);
   //convert moment
-  console.log(midnight);
+
   let shop = req.params.shopId;
   if (!req.cookies["viewlist"]) {
     addAnalytics(shop);
@@ -133,7 +131,7 @@ router.get("/analytics/messagecount/:shopId", (req, res) => {
 });
 
 //get all instock products of user
-router.get("/products/:id/:cat", (req, res) => {
+router.get("/allproducts/:id/:cat", (req, res) => {
   let sqlAll = `SELECT  products.* , GROUP_CONCAT(product_image ORDER BY products_images.id) AS images
     FROM    products 
     LEFT JOIN    products_images
@@ -152,11 +150,12 @@ router.get("/products/:id/:cat", (req, res) => {
   let query = mysqlConnection.query(
     req.params.cat == "all" ? sqlAll : sqlCat,
     (err, results) => {
-      if (err || results.length < 1)
+      if (err) {
         return res.status(500).json({
           status_code: 500,
           message: { messageBody: err, status: false },
         });
+      }
       return res.json({
         status_code: 200,
         status: true,
@@ -176,7 +175,6 @@ router.get("/search/products/:storeId/:keyword", (req, res) => {
     WHERE product_user='${req.params.storeId}' AND product_stock !=0 AND product_name LIKE '%${req.params.keyword}%'
     GROUP BY products.id`;
   let query = mysqlConnection.query(sqlSearch, (err, results) => {
-    console.log(sqlSearch);
     if (err)
       return res.json({
         status_code: 500,
