@@ -63,13 +63,17 @@ router.get("/analytics/storeviews/:shopId", (req, res) => {
   if (!req.cookies["viewlist"]) {
     addAnalytics(shop);
     let arr = [shop];
-    res.cookie("viewlist", JSON.stringify(arr), { expires: midnight });
+    res.cookie("viewlist", JSON.stringify(arr), app.get("cookie config"), {
+      expires: midnight,
+    });
   } else {
     let arr = JSON.parse(req.cookies["viewlist"]);
     if (arr.indexOf(shop) == -1) {
       addAnalytics(shop);
       arr.push(shop);
-      res.cookie("viewlist", JSON.stringify(arr), { expires: midnight });
+      res.cookie("viewlist", JSON.stringify(arr), app.get("cookie config"), {
+        expires: midnight,
+      });
     }
   }
 
