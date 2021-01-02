@@ -28,6 +28,7 @@ app.use(function (req, res, next) {
     "Access-Control-Allow-Headers",
     "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept,Authorization"
   );
+  response.header("Set-Cookie", "HttpOnly;Secure;SameSite=Strict");
   next();
 });
 app.use(cookieParser());
