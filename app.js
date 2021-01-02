@@ -17,14 +17,6 @@ const PORT = process.env.PORT || 5000;
 //   next();
 // });
 
-if (app.get("env") !== "development") {
-  // production settings, assume HTTPS
-  app.set("cookie config", { httpOnly: true, sameSite: "lax", secure: true });
-} else {
-  // development settings, no HTTPS
-  app.set("cookie config", { httpOnly: true, sameSite: "lax" });
-}
-
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Origin", req.headers.origin);
