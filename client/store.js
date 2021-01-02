@@ -73,7 +73,7 @@ router.get("/analytics/storeviews/:shopId", (req, res) => {
     }
   }
 
-  res.send(midnight);
+  res.json({ status: true });
 });
 
 const addAnalytics = (shop) => {
