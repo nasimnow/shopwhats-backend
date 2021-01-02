@@ -66,6 +66,7 @@ router.get("/analytics/storeviews/:shopId", (req, res) => {
     res.cookie("viewlist", JSON.stringify(arr), {
       expires: midnight,
       sameSite: "none",
+      secure: true,
     });
   } else {
     let arr = JSON.parse(req.cookies["viewlist"]);
@@ -75,6 +76,7 @@ router.get("/analytics/storeviews/:shopId", (req, res) => {
       res.cookie("viewlist", JSON.stringify(arr), {
         expires: midnight,
         sameSite: "none",
+        secure: true,
       });
     }
   }
