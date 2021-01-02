@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/:store", (req, res) => {
   let sql = `SELECT id,account_store,account_whatsapp,account_store_link,account_store_status,account_store_desc,account_store_address	 FROM account WHERE account_store_link = '${req.params.store}'`;
   let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
+    if (err || results.length < 1)
       return res
         .status(500)
         .json({ message: { messageBody: err, status: false } });
@@ -152,8 +152,8 @@ router.get("/products/:id/:cat", (req, res) => {
   let query = mysqlConnection.query(
     req.params.cat == "all" ? sqlAll : sqlCat,
     (err, results) => {
-      if (err)
-        return res.json({
+      if (err || results.length < 1)
+        return res.status(500).json({
           status_code: 500,
           message: { messageBody: err, status: false },
         });
