@@ -73,7 +73,7 @@ router.get("/analytics/storeviews/:shopId", (req, res) => {
     }
   }
 
-  res.json({ status: true });
+  res.json({ status: true, login: true });
 });
 
 const addAnalytics = (shop) => {
