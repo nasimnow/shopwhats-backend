@@ -4,6 +4,7 @@ const router = express.Router();
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
+const sharp = require("sharp");
 
 //get all details about loginned user
 router.get("/", (req, res) => {
@@ -63,40 +64,30 @@ let profileStorage = multer.diskStorage({
   },
 });
 
+let upload = multer({ storage: profileStorage }).single("account_store_image");
+
 //upload user store profile image to server
-router.post("/profile-upload/", (req, res) => {
-  let upload = multer({ storage: profileStorage }).single(
-    "account_store_image"
-  );
-  upload(req, res, function (err) {
-    if (err) {
-      console.log(err);
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
+router.post("/profile-upload/", upload, async (req, res) => {
+  let account_store_image = req.file.filename;
+
+  let sql = `UPDATE account SET ? WHERE id=${req.user.user.id}`;
+  let query = mysqlConnection.query(
+    sql,
+    { account_store_image },
+    (err, result) => {
+      if (err)
+        return res.json({
+          status_code: 500,
+          status: false,
+          error: { message: err },
+        });
     }
-    let account_store_image = req.file.filename;
-    let sql = `UPDATE account SET ? WHERE id=${req.user.user.id}`;
-    let query = mysqlConnection.query(
-      sql,
-      { account_store_image },
-      (err, result) => {
-        if (err)
-          return res.json({
-            status_code: 500,
-            status: false,
-            error: { message: err },
-          });
-      }
-    );
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: { profile_image: account_store_image },
-    });
+  );
+  return res.json({
+    status_code: 200,
+    status: true,
+    login: true,
+    data: { profile_image: account_store_image },
   });
 });
 

@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
 const moment = require("moment");
+const sharp = require("sharp");
 
 //get all products of current user
 //returning images id with images after imagname:imageid
@@ -228,37 +229,31 @@ let productStorage = multer.diskStorage({
     );
   },
 });
-
+let upload = multer({ storage: productStorage }).array("product_image", 6);
 //upload product images to server
-router.post("/imageupload/:pid", (req, res) => {
-  let upload = multer({ storage: productStorage }).array("product_image", 6);
-  upload(req, res, function (err) {
-    if (err) {
-      console.log(err);
+router.post("/imageupload/:pid", upload, async (req, res) => {
+  let arrayDb = [];
+  req.files.map((file) => arrayDb.push([req.params.pid, file.filename]));
+  for (let i = 0; i < req.files.length; i++) {
+    await sharp(req.files[i].path)
+      .resize(500)
+      .jpeg({ quality: 50 })
+      .toFile("./product-images/min-" + req.files[i].filename);
+  }
+  let sql = "INSERT INTO products_images (product_id, product_image) VALUES ?";
+  let query = mysqlConnection.query(sql, [arrayDb], (err, result) => {
+    if (err)
       return res.json({
         status_code: 500,
         status: false,
         error: { message: err },
       });
-    }
 
-    let arrayDb = [];
-    req.files.map((file) => arrayDb.push([req.params.pid, file.filename]));
-    let sql =
-      "INSERT INTO products_images (product_id, product_image) VALUES ?";
-    let query = mysqlConnection.query(sql, [arrayDb], (err, result) => {
-      if (err)
-        return res.json({
-          status_code: 500,
-          status: false,
-          error: { message: err },
-        });
-      return res.json({
-        status_code: 200,
-        status: true,
-        login: true,
-        data: { images: arrayDb },
-      });
+    return res.json({
+      status_code: 200,
+      status: true,
+      login: true,
+      data: { images: arrayDb },
     });
   });
 });
