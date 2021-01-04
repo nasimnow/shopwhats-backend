@@ -217,10 +217,11 @@ router.get("/catogories/no/:cat", (req, res) => {
 let productStorage = multer.diskStorage({
   destination: function (req, res, callback) {
     let dir = "./product-images/min";
+    let imageDir = "./product-images";
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
-    callback(null, dir);
+    callback(null, imageDir);
   },
   filename: function (req, file, callback) {
     callback(
@@ -241,7 +242,7 @@ router.post("/imageupload/:pid", upload, async (req, res) => {
         return lenna
           .resize(Jimp.AUTO, 400)
           .quality(60)
-          .write("./product-images/min-" + req.files[i].filename);
+          .write("./product-images/min/" + req.files[i].filename);
       })
       .catch((err) => {
         console.error(err);
@@ -268,9 +269,11 @@ router.post("/imageupload/:pid", upload, async (req, res) => {
 //remove already uploaded image from database
 router.post("/imageDelete/:pid", (req, res) => {
   let imagesTodelete = req.body.images_delete;
+  let imagesToDeleteFiles = imagesTodelete.map((image) => image.split(":")[0]);
+  let imagesToDeleteIds = imagesTodelete.map((image) => image.split(":")[1]);
   let sql = `DELETE FROM products_images WHERE product_id=${
     req.params.pid
-  } AND id IN(${imagesTodelete.join(",")})`;
+  } AND id IN(${imagesToDeleteIds.join(",")})`;
   let query = mysqlConnection.query(sql, (err, result) => {
     if (err)
       return res.json({
@@ -278,6 +281,12 @@ router.post("/imageDelete/:pid", (req, res) => {
         status: false,
         error: { message: err },
       });
+
+    //delete images from storage
+    for (let i = 0; i < imagesToDeleteFiles.length; i++) {
+      fs.unlinkSync(`./product-images/${imagesToDeleteFiles[i]}`);
+      fs.unlinkSync(`./product-images/min/${imagesToDeleteFiles[i]}`);
+    }
     return res.json({
       status_code: 201,
       status: true,
