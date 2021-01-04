@@ -216,7 +216,7 @@ router.get("/catogories/no/:cat", (req, res) => {
 
 let productStorage = multer.diskStorage({
   destination: function (req, res, callback) {
-    let dir = "./product-images";
+    let dir = "./product-images/min";
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
@@ -229,6 +229,7 @@ let productStorage = multer.diskStorage({
     );
   },
 });
+
 let upload = multer({ storage: productStorage }).array("product_image", 6);
 //upload product images to server
 router.post("/imageupload/:pid", upload, async (req, res) => {
