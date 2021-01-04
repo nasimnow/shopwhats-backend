@@ -4,7 +4,6 @@ const router = express.Router();
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
-const sharp = require("sharp");
 
 //get all details about loginned user
 router.get("/", (req, res) => {

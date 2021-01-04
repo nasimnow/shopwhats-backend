@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
 const moment = require("moment");
-const sharp = require("sharp");
+const Jimp = require("jimp");
 
 //get all products of current user
 //returning images id with images after imagname:imageid
@@ -235,10 +235,16 @@ router.post("/imageupload/:pid", upload, async (req, res) => {
   let arrayDb = [];
   req.files.map((file) => arrayDb.push([req.params.pid, file.filename]));
   for (let i = 0; i < req.files.length; i++) {
-    await sharp(req.files[i].path)
-      .resize(500)
-      .jpeg({ quality: 50 })
-      .toFile("./product-images/min-" + req.files[i].filename);
+    Jimp.read(req.files[i].path)
+      .then((lenna) => {
+        return lenna
+          .resize(256, 256)
+          .quality(40)
+          .write("./product-images/min-" + req.files[i].filename);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
   let sql = "INSERT INTO products_images (product_id, product_image) VALUES ?";
   let query = mysqlConnection.query(sql, [arrayDb], (err, result) => {
