@@ -266,7 +266,6 @@ router.post("/imageupload/:pid", (req, res) => {
 //remove already uploaded image from database
 router.post("/imageDelete/:pid", (req, res) => {
   let imagesTodelete = req.body.images_delete;
-  console.log(req.body);
   let sql = `DELETE FROM products_images WHERE product_id=${
     req.params.pid
   } AND id IN(${imagesTodelete.join(",")})`;

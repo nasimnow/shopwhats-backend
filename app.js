@@ -37,6 +37,13 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/client/store", require("./client/store"));
 
+app.use("/api/client/storehomepage", require("./client/pages/storeHome"));
+
+app.use(
+  "/api/client/productdetailedpage",
+  require("./client/pages/productDetailed")
+);
+
 app.use("/api/seller/register", require("./seller/account/register"));
 
 app.use("/api/seller/login", require("./seller/account/login"));
