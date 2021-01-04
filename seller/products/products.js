@@ -238,7 +238,7 @@ router.post("/imageupload/:pid", upload, async (req, res) => {
     Jimp.read(req.files[i].path)
       .then((lenna) => {
         return lenna
-          .quality(40)
+          .quality(20)
           .write("./product-images/min-" + req.files[i].filename);
       })
       .catch((err) => {
