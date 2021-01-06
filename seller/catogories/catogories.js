@@ -1,6 +1,7 @@
 const mysqlConnection = require("../../connection");
 const express = require("express");
 const router = express.Router();
+const deleteProductsByArray = require("../utils/deleteProducts");
 
 //get all catogories of current user
 router.get("/", (req, res) => {
@@ -102,9 +103,18 @@ router.get("/:id", (req, res) => {
 });
 //delete a specif catogory by id
 router.delete("/:id", (req, res) => {
-  let sql = `DELETE FROM catogories  WHERE id =${req.params.id} AND cat_user =${req.user.user.id} `;
-  let query = mysqlConnection.query(sql, (err, results) => {
+  let sql = `DELETE FROM catogories  WHERE id =${req.params.id} AND cat_user =${req.user.user.id};
+  SELECT id FROM products WHERE product_cat =${req.params.id} AND product_user =${req.user.user.id}`;
+  mysqlConnection.query(sql, (err, results) => {
     if (err)
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
+    let productIds = results[1].map((product) => product.id);
+    let deleteResponse = deleteProductsByArray(productIds, req.user.user.id);
+    if (!deleteResponse)
       return res.json({
         status_code: 500,
         status: false,

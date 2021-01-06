@@ -6,6 +6,7 @@ const path = require("path");
 const multer = require("multer");
 const moment = require("moment");
 const Jimp = require("jimp");
+const deleteProductsByArray = require("../utils/deleteProducts");
 
 //get all products of current user
 //returning images id with images after imagname:imageid
@@ -134,20 +135,19 @@ router.put("/", (req, res) => {
 
 //delete specific product
 router.delete("/:id", (req, res) => {
-  let sql = `DELETE FROM products  WHERE id =${req.params.id} AND product_user =${req.user.user.id} `;
-  let query = mysqlConnection.query(sql, (err, result) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
+  //delete products and its images
+  const response = deleteProductsByArray([req.params.id], req.user.user.id);
+  if (!response)
     return res.json({
-      status_code: 201,
-      status: true,
-      login: true,
-      data: { id: req.params.id },
+      status_code: 500,
+      status: false,
+      error: { message: err },
     });
+  return res.json({
+    status_code: 201,
+    status: true,
+    login: true,
+    data: { id: req.params.id },
   });
 });
 
