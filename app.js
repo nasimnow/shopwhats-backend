@@ -85,7 +85,7 @@ function isLogin(req, res, next) {
     req.token = bearer;
     jwt.verify(req.token, "secretkey", (err, authData) => {
       if (err) {
-        return res.status(401).json({
+        return res.json({
           status_code: 400,
           status: false,
           login: false,
@@ -96,7 +96,7 @@ function isLogin(req, res, next) {
       next();
     });
   } else {
-    return res.status(401).json({
+    return res.json({
       status_code: 400,
       status: false,
       login: false,
