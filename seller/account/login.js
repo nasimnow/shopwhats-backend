@@ -40,7 +40,7 @@ router.post("/", (req, res) => {
     }
 
     //credentials validated and generates jwt token
-    jwt.sign({ user }, "secretkey", { expiresIn: "1m" }, (err, token) => {
+    jwt.sign({ user }, "secretkey", { expiresIn: "14d" }, (err, token) => {
       if (err) {
         return res.json({
           status_code: 500,
