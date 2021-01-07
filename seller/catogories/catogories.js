@@ -113,6 +113,7 @@ router.delete("/:id", (req, res) => {
         error: { message: err },
       });
     let productIds = results[1].map((product) => product.id);
+    console.log(productIds);
     let deleteResponse = deleteProductsByArray(productIds, req.user.user.id);
     if (!deleteResponse)
       return res.json({

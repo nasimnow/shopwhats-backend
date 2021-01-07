@@ -3,12 +3,13 @@ const fs = require("fs");
 
 //pass array of product ids and user id to delete product
 const deleteProductsByArray = (productId, productUser) => {
-  let sql = `DELETE FROM products  WHERE id =${productId.join(
+  console.log(productId);
+  let sql = `DELETE FROM products  WHERE id in (${productId.join(
     ","
-  )} AND product_user =${productUser};
-  SELECT product_image FROM products_images  WHERE product_id =${productId.join(
+  )}) AND product_user =${productUser};
+  SELECT product_image FROM products_images  WHERE product_id in (${productId.join(
     ","
-  )}`;
+  )})`;
   console.log(sql);
   mysqlConnection.query(sql, (err, result) => {
     if (err) return false;
@@ -21,7 +22,9 @@ const deleteProductsByArray = (productId, productUser) => {
         console.log(error);
       }
     }
-    const sqlImageDelete = `DELETE FROM products_images where product_id = ${productId}`;
+    const sqlImageDelete = `DELETE FROM products_images where product_id in (${productId.join(
+      ","
+    )})`;
     mysqlConnection.query(sqlImageDelete, (err, result) => {
       if (err) console.log(err);
     });
