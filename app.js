@@ -68,7 +68,7 @@ app.get("/api/seller/loginstatus", (req, res) => {
       message: { messageBody: "Loginned", status: true, login: true },
     });
   }
-  return res.status(401).json({
+  return res.status(500).json({
     message: { messageBody: "Not Loginned", status: false, login: false },
   });
 });
@@ -85,8 +85,8 @@ function isLogin(req, res, next) {
     req.token = bearer;
     jwt.verify(req.token, "secretkey", (err, authData) => {
       if (err) {
-        return res.status(401).json({
-          status_code: 401,
+        return res.json({
+          status_code: 400,
           status: false,
           login: false,
           error: { message: "Session Expired", code: 105 },
@@ -96,8 +96,8 @@ function isLogin(req, res, next) {
       next();
     });
   } else {
-    return res.status(401).json({
-      status_code: 401,
+    return res.json({
+      status_code: 400,
       status: false,
       login: false,
       error: { message: "Please Login", code: 103 },
