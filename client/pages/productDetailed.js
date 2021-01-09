@@ -30,9 +30,9 @@ router.get("/:productId", (req, res) => {
         return res.status(200).json({
           status: true,
           data: {
-            storeinfo: storeDetailsProducts[0],
+            storeinfo: storeDetailsProducts[0][0],
             product: productDetails[0],
-            similarproducts: storeDetailsProducts[1][0],
+            similarproducts: storeDetailsProducts[1],
           },
         });
       }
