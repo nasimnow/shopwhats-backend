@@ -32,7 +32,7 @@ router.get("/:productId", (req, res) => {
           data: {
             storeinfo: storeDetailsProducts[0],
             product: productDetails[0],
-            similarproducts: storeDetailsProducts[1],
+            similarproducts: storeDetailsProducts[1][0],
           },
         });
       }
