@@ -87,6 +87,7 @@ router.get("/analytics/storeviews/:shopId", (req, res) => {
 
 const addAnalytics = (shop) => {
   let todayDate = moment().format("DD/MM/YYYY");
+  console.log(todayDate);
   let sql = `SELECT COUNT(*) AS count  FROM store_analytics WHERE user_id=${shop} AND date='${todayDate}'`;
   mysqlConnection.query(sql, (err, result) => {
     if (err) console.log(err);
