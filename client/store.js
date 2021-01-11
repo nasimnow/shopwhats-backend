@@ -1,6 +1,7 @@
 const mysqlConnection = require("../connection");
 const express = require("express");
 const router = express.Router();
+const moment = require("moment");
 
 //get all details of current store user
 router.get("/:store", (req, res) => {
@@ -85,9 +86,7 @@ router.get("/analytics/storeviews/:shopId", (req, res) => {
 });
 
 const addAnalytics = (shop) => {
-  let today = new Date();
-  let todayDate =
-    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  let todayDate = moment().format("DD/MM/YYYY");
   let sql = `SELECT COUNT(*) AS count  FROM store_analytics WHERE user_id=${shop} AND date='${todayDate}'`;
   mysqlConnection.query(sql, (err, result) => {
     if (err) console.log(err);
@@ -96,6 +95,7 @@ const addAnalytics = (shop) => {
         user_id: shop,
         store_views: 1,
         message_clicks: 0,
+        date: todayDate,
       };
       let sqlAdd = `INSERT INTO store_analytics SET ?`;
       mysqlConnection.query(sqlAdd, analyticsData, (err, result) => {
