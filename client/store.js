@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const moment = require("moment-timezone");
 
+let todayDate = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
 //get all details of current store user
 router.get("/:store", (req, res) => {
   let sql = `SELECT id,account_store,account_whatsapp,account_store_link,account_store_status,account_store_desc,account_store_address	 FROM account WHERE account_store_link = '${req.params.store}'`;
@@ -55,7 +56,6 @@ router.get("/products/single/:id", (req, res) => {
 
 //add store viewers analytics
 router.get("/analytics/storeviews/:shopId", (req, res) => {
-  let todayDate = moment().tz("Asia/Kolkata").format("DD/MM/YYYY");
   let midnight = moment().tz("Asia/Kolkata").toDate();
   midnight.setDate(midnight.getDate() + 1);
   midnight.setUTCHours(0, 0, 0, 0);
@@ -87,7 +87,6 @@ router.get("/analytics/storeviews/:shopId", (req, res) => {
 });
 
 const addAnalytics = (shop) => {
-  let todayDate = moment().tz("Asia/Kolkata").format("DD/MM/YYYY");
   let sql = `SELECT COUNT(*) AS count  FROM store_analytics WHERE user_id=${shop} AND date='${todayDate}'`;
   mysqlConnection.query(sql, (err, result) => {
     if (err) console.log(err);
