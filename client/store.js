@@ -1,7 +1,7 @@
 const mysqlConnection = require("../connection");
 const express = require("express");
 const router = express.Router();
-const moment = require("moment");
+const moment = require("moment-timezone");
 
 //get all details of current store user
 router.get("/:store", (req, res) => {
@@ -59,7 +59,7 @@ router.get("/analytics/storeviews/:shopId", (req, res) => {
   midnight.setDate(midnight.getDate() + 1);
   midnight.setUTCHours(0, 0, 0, 0);
   //convert moment
-  let todayDate = moment().format("DD/MM/YYYY");
+  let todayDate = moment().tz("Asia/Kolkata").format("DD/MM/YYYY");
   console.log(todayDate);
 
   let shop = req.params.shopId;
