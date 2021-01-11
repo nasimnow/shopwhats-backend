@@ -59,6 +59,8 @@ router.get("/analytics/storeviews/:shopId", (req, res) => {
   midnight.setDate(midnight.getDate() + 1);
   midnight.setUTCHours(0, 0, 0, 0);
   //convert moment
+  let todayDate = moment().format("DD/MM/YYYY");
+  console.log(todayDate);
 
   let shop = req.params.shopId;
   if (!req.cookies["viewlist"]) {
