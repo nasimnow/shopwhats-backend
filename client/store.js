@@ -55,13 +55,12 @@ router.get("/products/single/:id", (req, res) => {
 
 //add store viewers analytics
 router.get("/analytics/storeviews/:shopId", (req, res) => {
-  let midnight = new Date();
+  let todayDate = moment().tz("Asia/Kolkata").format("DD/MM/YYYY");
+  let midnight = moment().tz("Asia/Kolkata").toDate();
   midnight.setDate(midnight.getDate() + 1);
   midnight.setUTCHours(0, 0, 0, 0);
   //convert moment
-  let todayDate = moment().tz("Asia/Kolkata").format("DD/MM/YYYY");
-  console.log(todayDate);
-
+  console.log(midnight);
   let shop = req.params.shopId;
   if (!req.cookies["viewlist"]) {
     addAnalytics(shop);
@@ -88,8 +87,7 @@ router.get("/analytics/storeviews/:shopId", (req, res) => {
 });
 
 const addAnalytics = (shop) => {
-  let todayDate = moment().format("DD/MM/YYYY");
-  console.log(todayDate);
+  let todayDate = moment().tz("Asia/Kolkata").format("DD/MM/YYYY");
   let sql = `SELECT COUNT(*) AS count  FROM store_analytics WHERE user_id=${shop} AND date='${todayDate}'`;
   mysqlConnection.query(sql, (err, result) => {
     if (err) console.log(err);
