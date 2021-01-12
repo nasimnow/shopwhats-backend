@@ -128,11 +128,13 @@ router.get("/analytics/messagecount/:shopId", (req, res) => {
       let sqlAdd = `INSERT INTO store_analytics SET ?`;
       mysqlConnection.query(sqlAdd, analyticsData, (err, result) => {
         if (err) console.log(err);
+        res.json(result);
       });
     } else {
       let sqlAdd = `UPDATE store_analytics SET message_clicks = message_clicks+1  WHERE user_id=${shop} AND date='${todayDate}' `;
       mysqlConnection.query(sqlAdd, (err, result) => {
         if (err) console.log(err);
+        res.json(result);
       });
     }
   });
