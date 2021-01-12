@@ -112,9 +112,6 @@ const addAnalytics = (shop) => {
 
 //update store whatsapp button clicks
 router.get("/analytics/messagecount/:shopId", (req, res) => {
-  let today = new Date();
-  let todayDate =
-    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
   let shop = req.params.shopId;
   let sql = `SELECT COUNT(*) AS count  FROM store_analytics WHERE user_id=${shop} AND date='${todayDate}'`;
   mysqlConnection.query(sql, (err, result) => {
