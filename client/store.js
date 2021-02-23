@@ -3,18 +3,25 @@ const express = require("express");
 const router = express.Router();
 const moment = require("moment-timezone");
 
+const sequelize = require("../dbconnection");
+const initModels = require("../models/init-models");
+const models = initModels(sequelize);
+const Sequilize = require("sequelize");
+const fn = Sequilize.fn;
+const lit = Sequilize.literal;
+
 let todayDate = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
 //get all details of current store user
 router.get("/:store", (req, res) => {
-  let sql = `SELECT id,account_store,account_whatsapp,account_store_link,account_store_status,account_store_desc,account_store_address	 FROM account WHERE account_store_link = '${req.params.store}'`;
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err || results.length < 1)
-      return res
-        .status(500)
-        .json({ message: { messageBody: err, status: false } });
-
-    return res.status(201).json({ status: true, data: results });
+  const results = models.account.findOne({
+    where: { account_store_link: req.params.store },
   });
+  if (results.length < 1)
+    return res
+      .status(500)
+      .json({ message: { messageBody: err, status: false } });
+
+  return res.status(201).json({ status: true, data: results });
 });
 
 //get all categories of current store user

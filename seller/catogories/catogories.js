@@ -3,161 +3,135 @@ const express = require("express");
 const router = express.Router();
 const deleteProductsByArray = require("../utils/deleteProducts");
 
-//get all catogories of current user
-router.get("/", (req, res) => {
-  //let sql = `SELECT * FROM catogories WHERE cat_user=${req.user.user.id} `;
-  let sql = `SELECT * FROM catogories c LEFT JOIN
-  (SELECT product_cat, COUNT(*) AS product_count
-    FROM products
-    GROUP BY product_cat) p 
-    ON c.id = p.product_cat WHERE cat_user=${req.user.user.id}`;
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: results,
-    });
+const sequelize = require("../../dbconnection");
+const initModels = require("../../models/init-models");
+const models = initModels(sequelize);
+const Sequilize = require("sequelize");
+const products = require("../../models/products");
+const fn = Sequilize.fn;
+const col = Sequilize.col;
+
+// get all categorries of current user
+
+router.get("/", async (req, res) => {
+  const results = await models.categories.findAll({
+    where: { cat_user: req.user.user.id },
+    attributes: {
+      include: [[fn("COUNT", col("products.product_cat")), "product_count"]],
+    },
+    include: [
+      {
+        model: models.products,
+        as: "products",
+        attributes: [],
+        required: false,
+      },
+    ],
+    group: ["products.product_cat"],
   });
-});
 
-//get count of all catogories of a user
-router.get("/count", (req, res) => {
-  let sql = `SELECT COUNT(*) AS category_count FROM catogories WHERE cat_user=${req.user.user.id}`;
-
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        message: { messageBody: err, status: false },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: results,
-    });
+  return res.json({
+    status_code: 200,
+    status: true,
+    login: true,
+    data: results,
   });
 });
 
 //get all parent catogories
-router.get("/parent", (req, res) => {
-  let sql = `SELECT *FROM catogories_main`;
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: results,
-    });
+router.get("/parent", async (req, res) => {
+  const results = await models.categories_main.findAll();
+  return res.json({
+    status_code: 200,
+    status: true,
+    login: true,
+    data: results,
   });
 });
 
 //get parent catogory by id
-router.get("/parent/:id", (req, res) => {
-  let sql = `SELECT *FROM catogories_main WHERE id=${req.params.id}`;
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: results,
-    });
+router.get("/parent/:id", async (req, res) => {
+  const results = await models.categories_main.findByPk(
+    parseInt(req.params.id)
+  );
+  return res.json({
+    status_code: 200,
+    status: true,
+    login: true,
+    data: results,
   });
 });
 //get specific catogories by id
-router.get("/:id", (req, res) => {
-  let sql = `SELECT *FROM catogories WHERE id=${req.params.id} AND cat_user=${req.user.user.id}`;
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: results,
-    });
+router.get("/:id", async (req, res) => {
+  const results = await models.categories.findOne({
+    where: {
+      id: parseInt(req.params.id),
+      cat_user: req.user.user.id,
+    },
+  });
+
+  return res.json({
+    status_code: 200,
+    status: true,
+    login: true,
+    data: results,
   });
 });
-//delete a specif catogory by id
-router.delete("/:id", (req, res) => {
-  let sql = `DELETE FROM catogories  WHERE id =${req.params.id} AND cat_user =${req.user.user.id};
-  SELECT id FROM products WHERE product_cat =${req.params.id} AND product_user =${req.user.user.id}`;
-  mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    let productIds = results[1].map((product) => product.id);
-    console.log(productIds);
-    let deleteResponse = deleteProductsByArray(productIds, req.user.user.id);
-    if (!deleteResponse)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({
-      status_code: 201,
-      status: true,
-      login: true,
-      data: { id: req.params.id },
-    });
+
+//delete a category by id (deletes products under it and its images)
+router.delete("/:id", async (req, res) => {
+  const products = await models.products.findAll({
+    where: {
+      product_user: req.user.user.id,
+      product_cat: parseInt(req.params.id),
+    },
+  });
+  //extract productids from products
+  let productIds = products.map((product) => product.id);
+  //delete products and images from db and images from files
+  let deleteResponse = await deleteProductsByArray(
+    productIds,
+    req.user.user.id
+  );
+  await models.categories.destroy({
+    where: { id: parseInt(req.params.id), cat_user: req.user.user.id },
+  });
+
+  return res.json({
+    status_code: 201,
+    status: true,
+    login: true,
+    data: { id: req.params.id },
   });
 });
 
 //add new Category
-router.post("/", (req, res) => {
-  let cat = {
-    cat_name: req.body.cat_name,
-    cat_parent: req.body.cat_parent,
+router.post("/", async (req, res) => {
+  const response = await models.categories.create({
+    ...req.body,
     cat_user: req.user.user.id,
-  };
-  let sql = "INSERT INTO catogories SET ?";
-  let query = mysqlConnection.query(sql, cat, (err, result) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({ status_code: 201, status: true, login: true, data: cat });
+  });
+  return res.json({
+    status_code: 201,
+    status: true,
+    login: true,
+    data: response,
   });
 });
+
 //update a catogory by id
-router.put("/", (req, res) => {
-  let cat = { cat_name: req.body.cat_name, cat_parent: req.body.cat_parent };
-  let sql = `UPDATE catogories SET ? WHERE id=${req.body.id}`;
-  let query = mysqlConnection.query(sql, cat, (err, result) => {
-    if (err)
-      return res
-        .status(500)
-        .json({ status_code: 500, status: false, error: { message: err } });
-    return res.json({ status_code: 201, status: true, login: true, data: cat });
+
+//THE WAY WE RECIEVE ID IS CHANGED FROM REQ TO PARAMS
+router.put("/:id", async (req, res) => {
+  const response = await models.categories.update(
+    { ...req.body },
+    { where: { id: id } }
+  );
+  return res.json({
+    status_code: 201,
+    status: true,
+    login: true,
+    data: response,
   });
 });
 

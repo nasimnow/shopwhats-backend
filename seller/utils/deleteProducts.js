@@ -1,34 +1,29 @@
-const mysqlConnection = require("../../connection");
 const fs = require("fs");
 
-//pass array of product ids and user id to delete product
-const deleteProductsByArray = (productId, productUser) => {
-  console.log(productId);
-  let sql = `DELETE FROM products  WHERE id in (${productId.join(
-    ","
-  )}) AND product_user =${productUser};
-  SELECT product_image FROM products_images  WHERE product_id in (${productId.join(
-    ","
-  )})`;
-  console.log(sql);
-  mysqlConnection.query(sql, (err, result) => {
-    if (err) return false;
-    //delete images from storage
-    for (let i = 0; i < result[1].length; i++) {
-      try {
-        fs.unlinkSync(`./product-images/${result[1][i].product_image}`);
-        fs.unlinkSync(`./product-images/min/${result[1][i].product_image}`);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    const sqlImageDelete = `DELETE FROM products_images where product_id in (${productId.join(
-      ","
-    )})`;
-    mysqlConnection.query(sqlImageDelete, (err, result) => {
-      if (err) console.log(err);
-    });
+const sequelize = require("../../dbconnection");
+const initModels = require("../../models/init-models");
+const models = initModels(sequelize);
+
+const deleteProductsByArray = async (productId, productUser) => {
+  // get all images assosiated with the product
+  const product_images = await models.products_images.findAll({
+    where: { product_id: productId },
   });
+
+  //delete images from storage
+  for (let i = 0; i < product_images.length; i++) {
+    try {
+      fs.unlinkSync(`./product-images/${product_images[i].product_image}`);
+      fs.unlinkSync(`./product-images/min/${product_images[i].product_image}`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  // delete images from databse
+  await models.products_images.destroy({ where: { product_id: productId } });
+  // delete products from database
+  await models.products.destroy({ where: { id: productId } });
+
   return true;
 };
 

@@ -8,28 +8,31 @@ const moment = require("moment");
 const Jimp = require("jimp");
 const deleteProductsByArray = require("../utils/deleteProducts");
 
+const sequelize = require("../../dbconnection");
+const initModels = require("../../models/init-models");
+const models = initModels(sequelize);
+const Sequilize = require("sequelize");
+const products = require("../../models/products");
+const fn = Sequilize.fn;
+const lit = Sequilize.literal;
+
 //get all products of current user
 //returning images id with images after imagname:imageid
-router.get("/", (req, res) => {
-  let sql = `SELECT  products.* , GROUP_CONCAT(products_images.product_image, ':',products_images.id  ORDER BY products_images.id) AS images
-    FROM    products 
-    LEFT JOIN    products_images
-    ON      products_images.product_id = products.id
-    WHERE product_user=${req.user.user.id}
-    GROUP BY products.id`;
-  //let sql = `SELECT *FROM products WHERE product_user=${user[0].id}`
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        message: { messageBody: err, status: false },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: results,
-    });
+router.get("/", async (req, res) => {
+  const response = await models.products.findAll({
+    where: { product_user: req.user.user.id },
+    include: [
+      {
+        model: models.products_images,
+        as: "products_images",
+      },
+    ],
+  });
+  return res.json({
+    status_code: 200,
+    status: true,
+    login: true,
+    data: response,
   });
 });
 
@@ -38,7 +41,7 @@ router.get("/count", (req, res) => {
   const today = moment().format("YYYY-MM-DD");
   console.log(today);
   let sql = `select (select count(*) from products WHERE product_user=${req.user.user.id}) as products_count  ,
-  (select count(*) from catogories WHERE cat_user=${req.user.user.id}) as cat_count ,(select store_views from store_analytics WHERE user_id=${req.user.user.id} AND date='${today}') as store_views,(select message_clicks from store_analytics WHERE user_id=${req.user.user.id} AND date='${today}') as message_clicks`;
+  (select count(*) from categories WHERE cat_user=${req.user.user.id}) as cat_count ,(select store_views from store_analytics WHERE user_id=${req.user.user.id} AND date='${today}') as store_views,(select message_clicks from store_analytics WHERE user_id=${req.user.user.id} AND date='${today}') as message_clicks`;
   let query = mysqlConnection.query(sql, (err, results) => {
     if (err)
       return res.json({
@@ -54,82 +57,49 @@ router.get("/count", (req, res) => {
   });
 });
 //get specific product
-router.get("/:id", (req, res) => {
-  let sql = `SELECT  products.* , GROUP_CONCAT(products_images.product_image, ':',products_images.id  ORDER BY products_images.id) AS images
-    FROM    products 
-    LEFT JOIN    products_images
-    ON      products_images.product_id = products.id
-    WHERE products.id =${req.params.id} AND products.product_user =${req.user.user.id}
-    GROUP BY products.id`;
-  //let sql = `SELECT *FROM products WHERE id =${req.params.id} AND product_user =${user[0].id}`
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: results,
-    });
+router.get("/:id", async (req, res) => {
+  const response = await models.products.findByPk(req.params.id, {
+    include: [
+      {
+        model: models.products_images,
+        as: "products_images",
+      },
+    ],
+  });
+  return res.json({
+    status_code: 200,
+    status: true,
+    login: true,
+    data: response,
   });
 });
 
 //add new product
-router.post("/", (req, res) => {
-  console.log(req.body);
-  let product = {
-    product_user: req.user.user.id,
+router.post("/", async (req, res) => {
+  const response = await models.products.create({
     ...req.body,
-  };
-  let sql = "INSERT INTO products SET ?";
-  let query = mysqlConnection.query(sql, product, (err, result) => {
-    if (err) {
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    }
-    res.json({
-      status_code: 201,
-      status: true,
-      login: true,
-      data: { product_id: result.insertId },
-    });
+    product_user: req.user.user.id,
+  });
+  res.json({
+    status_code: 201,
+    status: true,
+    login: true,
+    data: response,
   });
 });
 
+//chnaged id from body to params
 //update specific product
-router.put("/", (req, res) => {
-  let product = {
-    product_name: req.body.product_name,
-    product_price: req.body.product_price,
-    product_is_sale: req.body.product_is_sale,
-    product_sale_price: req.body.product_sale_price,
-    product_desc: req.body.product_desc,
-    product_stock: req.body.product_stock,
-    product_cat: req.body.product_cat,
-  };
-
-  let sql = `UPDATE products  SET ? WHERE id =${req.body.id} AND product_user =${req.user.user.id}`;
-  let query = mysqlConnection.query(sql, product, (err, result) => {
-    //get images from product from
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({
-      status_code: 201,
-      status: true,
-      login: true,
-      data: product,
-    });
+router.put("/:id", async (req, res) => {
+  console.log(req.params.id);
+  const response = await models.products.update(req.body, {
+    where: { id: req.params.id },
+  });
+  return res.json({
+    status_code: 201,
+    status: true,
+    login: true,
+    data: response,
   });
 });
 
@@ -152,65 +122,35 @@ router.delete("/:id", (req, res) => {
 });
 
 //flip product stock status
-router.put("/stock/:id", (req, res) => {
-  let sql = `UPDATE products  SET product_stock = NOT product_stock WHERE id=${req.params.id} AND product_user =${req.user.user.id}`;
-  let query = mysqlConnection.query(sql, (err, result) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({
-      status_code: 201,
-      status: true,
-      login: true,
-      data: { id: req.params.id },
-    });
+router.put("/stock/:id", async (req, res) => {
+  const response = await models.products.update(
+    { product_stock: lit("NOT product_stock") },
+    { where: { id: req.params.id, product_user: req.user.user.id } }
+  );
+  return res.json({
+    status_code: 201,
+    status: true,
+    login: true,
+    data: response,
   });
 });
 
 //get all products of a specific catogory
-router.get("/catogories/:cat", (req, res) => {
-  let sql = `SELECT  products.* , GROUP_CONCAT(product_image ORDER BY products_images.id) AS images
-    FROM    products 
-    LEFT JOIN    products_images
-    ON      products_images.product_id = products.id
-    WHERE products.product_cat =${req.params.cat} AND products.product_user =${req.user.user.id}
-    GROUP BY products.id`;
-  // let sql = `SELECT *FROM products WHERE product_cat =${req.params.cat} AND product_user =${user[0].id}`
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: results,
-    });
+router.get("/catogories/:cat", async (req, res) => {
+  const response = await models.products.findAll({
+    where: { product_user: req.user.user.id, product_cat: req.params.cat },
+    include: [
+      {
+        model: models.products_images,
+        as: "products_images",
+      },
+    ],
   });
-});
-
-//get no of products under a catogory
-router.get("/catogories/no/:cat", (req, res) => {
-  let sql = `SELECT COUNT(*) AS count FROM products WHERE product_cat =${req.params.cat} AND product_user =${req.user.user.id}`;
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: { products_count: results[0].count },
-    });
+  return res.json({
+    status_code: 200,
+    status: true,
+    login: true,
+    data: response,
   });
 });
 
@@ -233,9 +173,9 @@ let productStorage = multer.diskStorage({
 
 let upload = multer({ storage: productStorage }).array("product_image", 6);
 //upload product images to server
-router.post("/imageupload/:pid", upload, async (req, res) => {
+router.post("/imageupload/:productId", upload, async (req, res) => {
   let arrayDb = [];
-  req.files.map((file) => arrayDb.push([req.params.pid, file.filename]));
+  req.files.map((file) => arrayDb.push([req.params.productId, file.filename]));
   for (let i = 0; i < req.files.length; i++) {
     Jimp.read(req.files[i].path)
       .then((lenna) => {
@@ -249,6 +189,7 @@ router.post("/imageupload/:pid", upload, async (req, res) => {
       });
   }
   let sql = "INSERT INTO products_images (product_id, product_image) VALUES ?";
+  console.log(arrayDb);
   let query = mysqlConnection.query(sql, [arrayDb], (err, result) => {
     if (err)
       return res.json({
@@ -267,35 +208,30 @@ router.post("/imageupload/:pid", upload, async (req, res) => {
 });
 
 //remove already uploaded image from database
-router.post("/imageDelete/:pid", (req, res) => {
-  let imagesTodelete = req.body.images_delete;
-  console.log(imagesTodelete);
-  let imagesToDeleteFiles = imagesTodelete.map((image) => image.split(":")[0]);
-  let imagesToDeleteIds = imagesTodelete.map((image) =>
-    parseInt(image.split(":")[1])
+//sent images as array
+router.post("/imageDelete/:pid", async (req, res) => {
+  const imagestoDeleteId = req.body.images_delete.map((image) => image.id);
+  const imagesToDeleteFiles = req.body.images_delete.map(
+    (image) => image.product_image
   );
-  let sql = `DELETE FROM products_images WHERE product_id=${
-    req.params.pid
-  } AND id IN(${imagesToDeleteIds.join(",")})`;
-  let query = mysqlConnection.query(sql, (err, result) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
+  const dbResponse = await models.products_images.destroy({
+    where: { product_id: req.params.pid, id: imagestoDeleteId },
+  });
 
-    //delete images from storage
-    for (let i = 0; i < imagesToDeleteFiles.length; i++) {
+  //delete images from storage
+  for (let i = 0; i < imagesToDeleteFiles.length; i++) {
+    try {
       fs.unlinkSync(`./product-images/${imagesToDeleteFiles[i]}`);
       fs.unlinkSync(`./product-images/min/${imagesToDeleteFiles[i]}`);
+    } catch (error) {
+      console.log("cant delete file");
     }
-    return res.json({
-      status_code: 201,
-      status: true,
-      login: true,
-      data: result,
-    });
+  }
+  return res.json({
+    status_code: 201,
+    status: true,
+    login: true,
+    data: dbResponse,
   });
 });
 
