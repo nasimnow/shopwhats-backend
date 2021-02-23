@@ -122,10 +122,10 @@ router.post("/", async (req, res) => {
 //update a catogory by id
 
 //THE WAY WE RECIEVE ID IS CHANGED FROM REQ TO PARAMS
-router.put("/:id", async (req, res) => {
+router.put("/:catId", async (req, res) => {
   const response = await models.categories.update(
     { ...req.body },
-    { where: { id: id } }
+    { where: { id: req.params.catId } }
   );
   return res.json({
     status_code: 201,

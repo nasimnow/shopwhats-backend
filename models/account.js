@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     account_store_image: {
       type: DataTypes.STRING(3000),
-      allowNull: false
+      allowNull: true
     },
     account_phone: {
       type: DataTypes.STRING(20),

@@ -9,7 +9,7 @@ const sequelize = require("../../dbconnection");
 const initModels = require("../../models/init-models");
 const models = initModels(sequelize);
 const Sequilize = require("sequelize");
-const products = require("../../models/products");
+
 const fn = Sequilize.fn;
 const lit = Sequilize.literal;
 
@@ -22,11 +22,13 @@ router.get("/", async (req, res) => {
 });
 
 //update store details
-router.put("/", (req, res) => {
+router.put("/", async (req, res) => {
   let store = {
     ...req.body,
   };
-
+  const response = await models.account.update(store, {
+    where: { id: req.user.user.id },
+  });
   return res.status(201).json({
     message: {
       messageBody: `Succesfully Updated ${req.body.account_store}`,

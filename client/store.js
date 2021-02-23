@@ -26,40 +26,12 @@ router.get("/:store", (req, res) => {
 });
 
 //get all categories of current store user
-router.get("/categories/all/:userId", (req, res) => {
-  let sql = `SELECT *	 FROM catogories WHERE cat_user = '${req.params.userId}'`;
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res
-        .status(500)
-        .json({ message: { messageBody: err, status: false } });
-
-    return res.status(201).json({ status: true, data: results });
+router.get("/categories/all/:userId", async (req, res) => {
+  const results = await models.categories.findAll({
+    where: { cat_user: req.params.userId },
   });
-});
 
-//get specific product
-router.get("/products/single/:id", (req, res) => {
-  let sql = `SELECT  products.* , GROUP_CONCAT(product_image ORDER BY products_images.id) AS images
-    FROM    products 
-    LEFT JOIN    products_images
-    ON      products_images.product_id = products.id
-    WHERE products.id =${req.params.id} 
-    GROUP BY products.id`;
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: results,
-    });
-  });
+  return res.status(201).json({ status: true, data: results });
 });
 
 //add store viewers analytics
@@ -147,7 +119,7 @@ router.get("/analytics/messagecount/:shopId", (req, res) => {
 
 //get all instock products of user
 router.get("/allproducts/:id/:cat", async (req, res) => {
-  const response = {};
+  let response = {};
   if (req.params.cat == "all") {
     response = await models.products.findAll({
       where: { product_user: req.params.id, product_stock: { [Op.ne]: 0 } },
@@ -183,25 +155,25 @@ router.get("/allproducts/:id/:cat", async (req, res) => {
 });
 
 // search products from store
-router.get("/search/products/:storeId/:keyword", (req, res) => {
-  let sqlSearch = `SELECT  products.* , GROUP_CONCAT(product_image ORDER BY products_images.id) AS images
-    FROM    products 
-    LEFT JOIN    products_images
-    ON      products_images.product_id = products.id
-    WHERE product_user='${req.params.storeId}' AND product_stock !=0 AND product_name LIKE '%${req.params.keyword}%'
-    GROUP BY products.id`;
-  let query = mysqlConnection.query(sqlSearch, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        message: { messageBody: err, status: false },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: results,
-    });
+router.get("/search/products/:storeId/:searchTerm", async (req, res) => {
+  const searchResponse = await models.products.findAll({
+    where: {
+      product_stock: { [Op.ne]: 0 },
+      product_user: req.params.storeId,
+      product_name: { [Op.like]: "%" + req.params.searchTerm + "%" },
+    },
+    include: [
+      {
+        model: models.products_images,
+        as: "products_images",
+      },
+    ],
+  });
+  return res.json({
+    status_code: 200,
+    status: true,
+    login: true,
+    data: searchResponse,
   });
 });
 

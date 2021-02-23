@@ -41,11 +41,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     product_desc: {
       type: DataTypes.STRING(500),
-      allowNull: false
+      allowNull: true
     },
     product_cat: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: 'categories',
         key: 'id'
