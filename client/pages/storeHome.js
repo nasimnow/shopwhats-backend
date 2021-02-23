@@ -22,6 +22,12 @@ router.get("/:store", async (req, res) => {
   console.log("safe");
   const products = await models.products.findAll({
     where: { product_user: storeinfo.id, product_stock: { [Op.ne]: 0 } },
+    include: [
+      {
+        model: models.products_images,
+        as: "products_images",
+      },
+    ],
   });
   return res.status(200).json({
     status: true,
