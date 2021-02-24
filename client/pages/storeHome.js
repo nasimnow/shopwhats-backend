@@ -19,7 +19,6 @@ router.get("/:store", async (req, res) => {
   const categories = await models.categories.findAll({
     where: { cat_user: storeinfo.id },
   });
-  console.log("safe");
   const products = await models.products.findAll({
     where: { product_user: storeinfo.id, product_stock: { [Op.ne]: 0 } },
     include: [
