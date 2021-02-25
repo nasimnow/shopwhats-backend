@@ -9,7 +9,6 @@ const sequelize = require("../../dbconnection");
 const initModels = require("../../models/init-models");
 const models = initModels(sequelize);
 const Sequilize = require("sequelize");
-const { where } = require("sequelize");
 
 const fn = Sequilize.fn;
 const lit = Sequilize.literal;
@@ -59,13 +58,10 @@ let upload = multer({ storage: profileStorage }).single("account_store_image");
 
 //upload user store profile image to server
 router.post("/profile-upload", upload, async (req, res) => {
-  await models.account.update(
+  const response = await models.account.update(
     { account_store_image: req.file.filename },
-    {
-      where: { id: req.user.user.id },
-    }
+    { where: { id: req.user.user.id } }
   );
-
   return res.json({
     status_code: 200,
     status: true,
