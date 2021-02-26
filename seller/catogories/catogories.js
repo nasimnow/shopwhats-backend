@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
   const results = await models.categories.findAll({
     where: { cat_user: req.user.user.id },
     attributes: {
-      include: [[fn("COUNT", col("Products.product_cat")), "product_count"]],
+      include: [[fn("COUNT", col("products.product_cat")), "product_count"]],
     },
     include: [
       {
