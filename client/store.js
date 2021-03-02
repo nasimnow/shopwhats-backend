@@ -25,23 +25,22 @@ router.get("/:store", (req, res) => {
   return res.status(201).json({ status: true, data: results });
 });
 
-//get all details of current store by id
-router.get("/byid/:storeId", (req, res) => {
-  const results = models.account.findOne({
-    where: { id: parseInt(req.params.storeId) },
-  });
-  if (results.length < 1)
-    return res
-      .status(500)
-      .json({ message: { messageBody: err, status: false } });
-
-  return res.status(201).json({ status: true, data: results });
-});
 //get all categories of current store user
 router.get("/categories/all/:userId", async (req, res) => {
   const results = await models.categories.findAll({
     where: { cat_user: req.params.userId },
   });
+
+  return res.status(201).json({ status: true, data: results });
+});
+
+//get all details of current store by id
+router.get("/byid/:storeId", async (req, res) => {
+  const results = await models.account.findByPk(req.params.storeId);
+  if (results.length < 1)
+    return res
+      .status(500)
+      .json({ message: { messageBody: err, status: false } });
 
   return res.status(201).json({ status: true, data: results });
 });
