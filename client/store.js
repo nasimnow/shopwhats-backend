@@ -12,7 +12,7 @@ const lit = Sequilize.literal;
 const Op = Sequilize.Op;
 
 let todayDate = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
-//get all details of current store user
+//get all details of current store user by link
 router.get("/:store", (req, res) => {
   const results = models.account.findOne({
     where: { account_store_link: req.params.store },
@@ -25,6 +25,18 @@ router.get("/:store", (req, res) => {
   return res.status(201).json({ status: true, data: results });
 });
 
+//get all details of current store by id
+router.get("/byid/:storeId", (req, res) => {
+  const results = models.account.findOne({
+    where: { id: req.params.storeId },
+  });
+  if (results.length < 1)
+    return res
+      .status(500)
+      .json({ message: { messageBody: err, status: false } });
+
+  return res.status(201).json({ status: true, data: results });
+});
 //get all categories of current store user
 router.get("/categories/all/:userId", async (req, res) => {
   const results = await models.categories.findAll({
