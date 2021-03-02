@@ -38,6 +38,20 @@ router.put("/", async (req, res) => {
   });
 });
 
+//flip store status
+router.put("/status/:id", async (req, res) => {
+  const response = await models.account.update(
+    { account_store_status: lit("NOT account_store_status") },
+    { where: { id: req.params.id } }
+  );
+  return res.json({
+    status_code: 201,
+    status: true,
+    login: true,
+    data: response,
+  });
+});
+
 let profileStorage = multer.diskStorage({
   destination: function (req, res, callback) {
     let dir = "./profile-images";
