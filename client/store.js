@@ -28,7 +28,7 @@ router.get("/:store", (req, res) => {
 //get all details of current store by id
 router.get("/byid/:storeId", (req, res) => {
   const results = models.account.findOne({
-    where: { id: req.params.storeId },
+    where: { id: parseInt(req.params.storeId) },
   });
   if (results.length < 1)
     return res
