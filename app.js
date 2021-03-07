@@ -11,6 +11,9 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.get("test",(req,res)=>{
+  return res.send("its working")
+})
 
 app.use("/api/client/store", require("./client/store"));
 
