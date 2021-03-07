@@ -6,7 +6,7 @@ const cors = require("cors");
 const sequelize = require("sequelize");
 
 require("dotenv").config();
-const PORT = process.env.PORT || 5000;
+const PORT = 80;
 
 await sequelize.sync({ force: true });
 console.log("All models were synchronized successfully.");
