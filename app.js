@@ -8,7 +8,7 @@ const sequelize = require("sequelize");
 require("dotenv").config();
 const PORT = 80;
 
-
+//set database tabes on vultr using sequilize mirgat
 console.log("All models were synchronized successfully.");
 
 app.use(cors());
