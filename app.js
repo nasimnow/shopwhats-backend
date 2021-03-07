@@ -3,9 +3,13 @@ const jwt = require("jsonwebtoken");
 const app = express();
 let cookieParser = require("cookie-parser");
 const cors = require("cors");
+const sequelize = require("sequelize");
 
 require("dotenv").config();
 const PORT = process.env.PORT || 5000;
+
+await sequelize.sync({ force: true });
+console.log("All models were synchronized successfully.");
 
 app.use(cors());
 app.use(cookieParser());
