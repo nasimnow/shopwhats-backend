@@ -3,21 +3,17 @@ const jwt = require("jsonwebtoken");
 const app = express();
 let cookieParser = require("cookie-parser");
 const cors = require("cors");
-const sequelize = require("sequelize");
 
 require("dotenv").config();
 const PORT = 5000;
-
-//set database tabes on vultr using sequilize mirgat
-console.log("All models were synchronized successfully.");
 
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.get("/test",(req,res)=>{
-  return res.send("its working")
-})
+app.get("/test", (req, res) => {
+  return res.send("its working");
+});
 
 app.use("/api/client/store", require("./client/store"));
 
