@@ -207,6 +207,31 @@ router.post("/imageupload/:productId", upload, async (req, res) => {
   });
 });
 
+//add product images to database
+router.post("/imageAdd/:productId", (req, res) => {
+  let arrayDb = [];
+  req.body.product_images.map((file) =>
+    arrayDb.push([req.params.productId, file])
+  );
+  let sql = "INSERT INTO products_images (product_id, product_image) VALUES ?";
+  console.log(arrayDb);
+  let query = mysqlConnection.query(sql, [arrayDb], (err, result) => {
+    if (err)
+      return res.json({
+        status_code: 500,
+        status: false,
+        error: { message: err },
+      });
+
+    return res.json({
+      status_code: 200,
+      status: true,
+      login: true,
+      data: { images: arrayDb },
+    });
+  });
+});
+
 //remove already uploaded image from database
 //sent images as array
 router.post("/imageDelete/:pid", async (req, res) => {
@@ -217,7 +242,6 @@ router.post("/imageDelete/:pid", async (req, res) => {
   const dbResponse = await models.products_images.destroy({
     where: { product_id: req.params.pid, id: imagestoDeleteId },
   });
-
   //delete images from storage
   for (let i = 0; i < imagesToDeleteFiles.length; i++) {
     try {
