@@ -9,8 +9,8 @@ const PORT = 5000;
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://www.saav.in"],
     credentials: true,
+    origin: ["http://localhost:3000", "https://www.saav.in"],
   })
 );
 app.use(cookieParser());
