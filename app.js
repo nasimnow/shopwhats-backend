@@ -6,12 +6,10 @@ const cors = require("cors");
 
 require("dotenv").config();
 const PORT = 5000;
+
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", [
-    "http://localhost:3000",
-    "https://www.saav.in",
-  ]);
-  res.header(("Access-Control-Allow-Credentials", true));
+  res.header("Access-Control-Allow-Origin", req.header("origin"));
+  res.header(("Access-Control-Allow-Credentials", "true"));
   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
   next();
 });
