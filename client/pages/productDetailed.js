@@ -12,7 +12,13 @@ router.get("/:productId", async (req, res) => {
   const product = await models.products.findByPk(
     parseInt(req.params.productId),
     {
-      include: [{ model: models.products_images, as: "products_images" }],
+      include: [
+        { model: models.products_images, as: "products_images" },
+        {
+          model: models.products_variants,
+          as: "products_variants",
+        },
+      ],
     }
   );
   const storeinfo = await models.account.findByPk(product.product_user, {

@@ -26,6 +26,10 @@ router.get("/:store", async (req, res) => {
         model: models.products_images,
         as: "products_images",
       },
+      {
+        model: models.products_variants,
+        as: "products_variants",
+      },
     ],
   });
   return res.status(200).json({
