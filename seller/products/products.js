@@ -17,7 +17,7 @@ const fn = Sequilize.fn;
 const lit = Sequilize.literal;
 
 //get all products of current user
-//returning images id with images after imagname:imageid
+
 router.get("/", async (req, res) => {
   const response = await models.products.findAll({
     where: { product_user: req.user.user.id },
@@ -25,6 +25,10 @@ router.get("/", async (req, res) => {
       {
         model: models.products_images,
         as: "products_images",
+      },
+      {
+        model: models.products_variants,
+        as: "products_variants",
       },
     ],
   });
@@ -64,6 +68,10 @@ router.get("/:id", async (req, res) => {
         model: models.products_images,
         as: "products_images",
       },
+      {
+        model: models.products_variants,
+        as: "products_variants",
+      },
     ],
   });
   return res.json({
@@ -88,7 +96,6 @@ router.post("/", async (req, res) => {
   });
 });
 
-//chnaged id from body to params
 //update specific product
 router.put("/:id", async (req, res) => {
   console.log(req.params.id);
@@ -129,6 +136,36 @@ router.put("/stock/:id", async (req, res) => {
   );
   return res.json({
     status_code: 201,
+    status: true,
+    login: true,
+    data: response,
+  });
+});
+
+//add a variant to product
+router.post("/variants", async (req, res) => {
+  console.log(req.body.variants_array);
+
+  const response = await models.products_variants.bulkCreate(
+    req.body.variants_array
+  );
+
+  return res.json({
+    status_code: 200,
+    status: true,
+    login: true,
+    data: response,
+  });
+});
+
+//delete a variant by id
+router.post("/variants/delete", async (req, res) => {
+  console.log("hiiiiiiiiiiiiii");
+  const response = await models.products_variants.destroy({
+    where: { id: req.body.variants_array },
+  });
+  return res.json({
+    status_code: 200,
     status: true,
     login: true,
     data: response,

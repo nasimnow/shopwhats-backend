@@ -29,11 +29,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 0
     },
-    product_unit: {
-      type: DataTypes.STRING(20),
-      allowNull: false,
-      defaultValue: "piece"
-    },
     product_is_sale: {
       type: DataTypes.INTEGER,
       allowNull: false,
