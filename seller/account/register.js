@@ -2,6 +2,10 @@ const mysqlConnection = require("../../connection");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
+const sequelize = require("../../dbconnection");
+const initModels = require("../../models/init-models");
+const models = initModels(sequelize);
+const Sequilize = require("sequelize");
 
 router.post("/", async (req, res) => {
   try {
@@ -44,6 +48,14 @@ router.post("/", async (req, res) => {
       }
     );
   } catch (error) {}
+});
+
+router.post("/checkphone/:phone", async (req, res) => {
+  let userData = await models.account.findOne({
+    where: { account_phone: req.params.phone },
+  });
+
+  return res.json({ status: userData.length < 1 });
 });
 
 function checkUser(phone, store, addUser, registerd) {
