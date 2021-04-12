@@ -54,8 +54,8 @@ router.post("/checkphone/:phone", async (req, res) => {
   let userData = await models.account.findOne({
     where: { account_phone: req.params.phone },
   });
-
-  return res.json({ status: userData.length < 1 });
+  console.log(userData);
+  return res.json({ status: userData === null });
 });
 
 function checkUser(phone, store, addUser, registerd) {
