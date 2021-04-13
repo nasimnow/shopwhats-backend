@@ -57,6 +57,7 @@ router.post("/new", async (req, res) => {
     account_phone: req.body.account_phone,
     account_store: req.body.account_store,
     account_store_link: storeLinkGen,
+    account_whatsapp: req.body.account_phone,
   });
   return res.json({
     status: true,
