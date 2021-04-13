@@ -50,6 +50,35 @@ router.post("/", async (req, res) => {
   } catch (error) {}
 });
 
+//register without password
+router.post("/new", async (req, res) => {
+  const storeLinkGen = await checkStoreUsername(req.body.account_store);
+  const addUser = await models.account.create({
+    account_phone: req.body.account_phone,
+    account_store: req.body.account_store,
+    account_store_link: storeLinkGen,
+  });
+  return res.json({
+    status: true,
+    message: "Succesfully Registered",
+  });
+});
+
+//check store link (new)
+const checkStoreUsername = async (storeName) => {
+  //replace space with underscore
+  storeName = storeName.replace(/ /g, "_");
+  const userNameCount = await models.account.count({
+    where: { account_store_link: storeName },
+  });
+  if (userNameCount > 0) {
+    storeName = storeName + Math.floor(Math.random() * (999 - 100 + 1) + 100);
+    checkStoreUsername(storeName);
+  } else {
+    return storeName;
+  }
+};
+
 router.post("/checkphone/:phone", async (req, res) => {
   let userData = await models.account.findOne({
     where: { account_phone: req.params.phone },

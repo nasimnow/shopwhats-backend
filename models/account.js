@@ -23,10 +23,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(20),
       allowNull: false
     },
-    account_password: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
     account_store_link: {
       type: DataTypes.STRING(100),
       allowNull: true
