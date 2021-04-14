@@ -84,26 +84,4 @@ router.post("/checkphone/:phone", async (req, res) => {
   return res.json({ status: userData < 1 });
 });
 
-function checkUser(phone, store, addUser, registerd) {
-  let sql = `SELECT COUNT(*) AS count  FROM account WHERE account_phone=${phone}`;
-  let query = mysqlConnection.query(sql, (err, result) => {
-    if (result[0].count == 0) {
-      checkLink(store, addUser);
-    } else registerd();
-  });
-}
-
-function checkLink(store, addUser) {
-  let sql = `SELECT COUNT(*) AS count  FROM account WHERE account_store_link='${store}'`;
-  let query = mysqlConnection.query(sql, (err, result) => {
-    if (result[0].count == 0) {
-      console.log(store);
-      addUser(store);
-    } else {
-      let newStore = store + Math.floor(Math.random() * (999 - 100 + 1) + 100);
-      checkLink(newStore, addUser);
-    }
-  });
-}
-
 module.exports = router;
