@@ -52,6 +52,15 @@ router.post("/", async (req, res) => {
 
 //register without password
 router.post("/new", async (req, res) => {
+  //check if mobile no is registered
+  const mobileCheck = await models.account.count({
+    where: { account_phone: req.body.account_phone },
+  });
+  if (mobileCheck > 0)
+    return res.json({
+      status: false,
+      message: "Already Registered",
+    });
   const storeLinkGen = await checkStoreUsername(req.body.account_store);
   const addUser = await models.account.create({
     account_phone: req.body.account_phone,
@@ -72,6 +81,8 @@ const checkStoreUsername = async (storeName) => {
   const userNameCount = await models.account.count({
     where: { account_store_link: storeName },
   });
+
+  //problem in storelink is null saved
   if (userNameCount > 0) {
     storeName = storeName + Math.floor(Math.random() * (999 - 100 + 1) + 100);
     checkStoreUsername(storeName);
@@ -81,11 +92,10 @@ const checkStoreUsername = async (storeName) => {
 };
 
 router.post("/checkphone/:phone", async (req, res) => {
-  let userData = await models.account.findOne({
+  let userData = await models.account.count({
     where: { account_phone: req.params.phone },
   });
-  console.log(userData);
-  return res.json({ status: userData === null });
+  return res.json({ status: userData < 1 });
 });
 
 function checkUser(phone, store, addUser, registerd) {
