@@ -61,7 +61,8 @@ router.post("/new", async (req, res) => {
       status: false,
       message: "Already Registered",
     });
-  const storeLinkGen = await checkStoreUsername(req.body.account_store);
+  let storeLinkGen = await checkStoreUsername(req.body.account_store);
+  console.log(storeLinkGen);
   const addUser = await models.account.create({
     account_phone: req.body.account_phone,
     account_store: req.body.account_store,
@@ -82,13 +83,11 @@ const checkStoreUsername = async (storeName) => {
     where: { account_store_link: storeName },
   });
 
-  //problem in storelink is null saved
-  if (userNameCount > 0) {
-    storeName = storeName + Math.floor(Math.random() * (999 - 100 + 1) + 100);
-    checkStoreUsername(storeName);
-  } else {
-    return storeName;
-  }
+  if (userNameCount < 1) return storeName;
+  else
+    return checkStoreUsername(
+      storeName + Math.floor(Math.random() * (999 - 100 + 1) + 100)
+    );
 };
 
 router.post("/checkphone/:phone", async (req, res) => {
