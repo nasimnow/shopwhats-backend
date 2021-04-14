@@ -19,6 +19,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(20),
       allowNull: false
     },
+    account_password: {
+      type: DataTypes.STRING(1000),
+      allowNull: false
+    },
     account_whatsapp: {
       type: DataTypes.STRING(20),
       allowNull: false
