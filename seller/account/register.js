@@ -10,44 +10,31 @@ const Sequilize = require("sequelize");
 router.post("/", async (req, res) => {
   try {
     hashedPassword = await bcrypt.hash(req.body.account_password, 10);
-    checkUser(
-      req.body.account_phone,
-      req.body.account_store,
-      //callback for registering user if all requirments met
-      (store_new) => {
-        let account = {
-          account_phone: req.body.account_phone,
-          account_password: hashedPassword,
-          account_store: req.body.account_store,
-          account_store_link: store_new,
-          account_whatsapp: req.body.account_phone,
-        };
-        let sql = "INSERT INTO account SET ?";
-        let query = mysqlConnection.query(sql, account, (err, result) => {
-          if (err)
-            return res.json({
-              status_code: 500,
-              status: false,
-              error: { message: err },
-            });
-          return res.json({
-            status_code: 201,
-            status: true,
-            login: false,
-            data: account,
-          });
-        });
-      },
-      () => {
-        return res.json({
-          status_code: 400,
-          status: false,
-          login: false,
-          error: { message: "Already Registered", code: 100 },
-        });
-      }
-    );
-  } catch (error) {}
+    //check if mobile no is registered
+    const mobileCheck = await models.account.count({
+      where: { account_phone: req.body.account_phone },
+    });
+    if (mobileCheck > 0)
+      return res.json({
+        status: false,
+        message: "Already Registered",
+      });
+    let storeLinkGen = await checkStoreUsername(req.body.account_store);
+    console.log(storeLinkGen);
+    const addUser = await models.account.create({
+      account_phone: req.body.account_phone,
+      account_store: req.body.account_store,
+      account_store_link: storeLinkGen,
+      account_password: hashedPassword,
+      account_whatsapp: req.body.account_phone,
+    });
+    return res.json({
+      status: true,
+      message: "Succesfully Registered",
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 //register without password
