@@ -21,6 +21,8 @@ const deleteProductsByArray = async (productId, productUser) => {
   }
   // delete images from databse
   await models.products_images.destroy({ where: { product_id: productId } });
+  //delete variants from database
+  await models.products_variants.destroy({ where: { product_id: productId } });
   // delete products from database
   await models.products.destroy({ where: { id: productId } });
 
