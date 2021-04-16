@@ -47,8 +47,9 @@ router.get("/byid/:storeId", async (req, res) => {
 
 router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
   const data = await models.store_analytics.findOne({
-    where: { id: req.params.shopId, date: todayDate },
+    where: { user_id: req.params.shopId, date: todayDate },
   });
+
   if (data) {
     await models.store_analytics.increment("store_views", {
       where: { id: data.id },
