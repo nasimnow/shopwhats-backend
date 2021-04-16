@@ -45,6 +45,24 @@ router.get("/byid/:storeId", async (req, res) => {
   return res.status(201).json({ status: true, data: results });
 });
 
+router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
+  const data = await models.store_analytics.findOne({
+    where: { id: req.params.shopId, date: todayDate },
+  });
+  if (data) {
+    await models.store_analytics.increment("store_views", {
+      where: { id: data.id },
+    });
+  } else {
+    await models.store_analytics.create({
+      user_id: req.params.shopId,
+      store_views: 1,
+      message_clicks: 0,
+    });
+  }
+  res.json(data);
+});
+
 //add store viewers analytics
 router.get("/analytics/storeviews/:shopId", (req, res) => {
   let midnight = moment().tz("Asia/Kolkata").toDate();
