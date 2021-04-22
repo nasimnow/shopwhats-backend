@@ -49,7 +49,7 @@ router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
   const data = await models.store_analytics.findOne({
     where: { user_id: req.params.shopId, date: todayDate },
   });
-
+  console.log(data);
   if (data) {
     await models.store_analytics.increment("store_views", {
       where: { id: data.id },
@@ -61,90 +61,28 @@ router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
       message_clicks: 0,
     });
   }
-  res.json(data);
+  res.json({ status: true });
 });
-
-//add store viewers analytics
-router.get("/analytics/storeviews/:shopId", (req, res) => {
-  let midnight = moment().tz("Asia/Kolkata").toDate();
-  midnight.setDate(midnight.getDate() + 1);
-  midnight.setUTCHours(0, 0, 0, 0);
-  //convert moment
-  console.log(midnight);
-  let shop = req.params.shopId;
-  if (!req.cookies["viewlist"]) {
-    addAnalytics(shop);
-    let arr = [shop];
-    res.cookie("viewlist", JSON.stringify(arr), {
-      expires: midnight,
-      sameSite: "none",
-      secure: true,
-    });
-  } else {
-    let arr = JSON.parse(req.cookies["viewlist"]);
-    if (arr.indexOf(shop) == -1) {
-      addAnalytics(shop);
-      arr.push(shop);
-      res.cookie("viewlist", JSON.stringify(arr), {
-        expires: midnight,
-        sameSite: "none",
-        secure: true,
-      });
-    }
-  }
-
-  res.json({ status: true, login: true });
-});
-
-const addAnalytics = (shop) => {
-  let sql = `SELECT COUNT(*) AS count  FROM store_analytics WHERE user_id=${shop} AND date='${todayDate}'`;
-  mysqlConnection.query(sql, (err, result) => {
-    if (err) console.log(err);
-    if (result[0].count == 0) {
-      let analyticsData = {
-        user_id: shop,
-        store_views: 1,
-        message_clicks: 0,
-        date: todayDate,
-      };
-      let sqlAdd = `INSERT INTO store_analytics SET ?`;
-      mysqlConnection.query(sqlAdd, analyticsData, (err, result) => {
-        if (err) console.log(err);
-      });
-    } else {
-      let sqlAdd = `UPDATE store_analytics SET store_views = store_views+1  WHERE user_id=${shop} AND date='${todayDate}' `;
-      mysqlConnection.query(sqlAdd, (err, result) => {
-        if (err) console.log(err);
-      });
-    }
-  });
-};
 
 //update store whatsapp button clicks
-router.get("/analytics/messagecount/:shopId", (req, res) => {
-  let shop = req.params.shopId;
-  let sql = `SELECT COUNT(*) AS count  FROM store_analytics WHERE user_id=${shop} AND date='${todayDate}'`;
-  mysqlConnection.query(sql, (err, result) => {
-    if (err) console.log(err);
-    if (result[0].count == 0) {
-      let analyticsData = {
-        user_id: shop,
-        store_views: 1,
-        message_clicks: 1,
-      };
-      let sqlAdd = `INSERT INTO store_analytics SET ?`;
-      mysqlConnection.query(sqlAdd, analyticsData, (err, result) => {
-        if (err) console.log(err);
-        res.json(result);
-      });
-    } else {
-      let sqlAdd = `UPDATE store_analytics SET message_clicks = message_clicks+1  WHERE user_id=${shop} AND date='${todayDate}' `;
-      mysqlConnection.query(sqlAdd, (err, result) => {
-        if (err) console.log(err);
-        res.json(result);
-      });
-    }
+router.get("/analytics/messagecount/:shopId", async (req, res) => {
+  let shopId = req.params.shopId;
+  const data = await models.store_analytics.findOne({
+    where: { user_id: req.params.shopId, date: todayDate },
   });
+
+  if (data) {
+    await models.store_analytics.increment("message_clicks", {
+      where: { id: data.id },
+    });
+  } else {
+    await models.store_analytics.create({
+      user_id: req.params.shopId,
+      store_views: 1,
+      message_clicks: 1,
+    });
+  }
+  res.json({ status: true });
 });
 
 //get all instock products of user

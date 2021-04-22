@@ -13,6 +13,7 @@ const initModels = require("../../models/init-models");
 const models = initModels(sequelize);
 const Sequilize = require("sequelize");
 const products = require("../../models/products");
+const { model } = require("../../dbconnection");
 const fn = Sequilize.fn;
 const lit = Sequilize.literal;
 
@@ -41,23 +42,35 @@ router.get("/", async (req, res) => {
 });
 
 //get count of all products of a user
-router.get("/count", (req, res) => {
+router.get("/count", async (req, res) => {
+  let results;
+  const userId = req.user.user.id;
   const today = moment().format("YYYY-MM-DD");
-  console.log(today);
-  let sql = `select (select count(*) from products WHERE product_user=${req.user.user.id}) as products_count  ,
-  (select count(*) from categories WHERE cat_user=${req.user.user.id}) as cat_count ,(select store_views from store_analytics WHERE user_id=${req.user.user.id} AND date='${today}') as store_views,(select message_clicks from store_analytics WHERE user_id=${req.user.user.id} AND date='${today}') as message_clicks`;
-  let query = mysqlConnection.query(sql, (err, results) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        message: { messageBody: err, status: false },
-      });
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: results,
-    });
+  const views = await models.store_analytics.findOne({
+    attributes: ["store_views", "message_clicks"],
+    where: { user_id: 2, date: today },
+  });
+  const products_count = await models.products.count({
+    where: { product_user: userId },
+  });
+  const cat_count = await models.categories.count({
+    where: { cat_user: userId },
+  });
+  if (views) results = { ...views.dataValues, products_count, cat_count };
+  else
+    results = {
+      store_views: null,
+      message_clicks: null,
+      products_count,
+      cat_count,
+    };
+  console.log(results);
+
+  return res.json({
+    status_code: 200,
+    status: true,
+    login: true,
+    data: results,
   });
 });
 //get specific product
