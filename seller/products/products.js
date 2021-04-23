@@ -48,8 +48,9 @@ router.get("/count", async (req, res) => {
   const today = moment().format("YYYY-MM-DD");
   const views = await models.store_analytics.findOne({
     attributes: ["store_views", "message_clicks"],
-    where: { user_id: 2, date: today },
+    where: { user_id: req.user.user.id, date: today },
   });
+  console.log(views);
   const products_count = await models.products.count({
     where: { product_user: userId },
   });
