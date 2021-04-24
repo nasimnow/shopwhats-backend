@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 
-const sequelize = require("../../dbconnection");
-const initModels = require("../../models/init-models");
+const sequelize = require("./dbconnection");
+const initModels = require("./models/init-models");
 const models = initModels(sequelize);
 
 app.use(cookieParser());
