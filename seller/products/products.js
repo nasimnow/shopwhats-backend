@@ -174,7 +174,6 @@ router.post("/variants", async (req, res) => {
 
 //delete a variant by id
 router.post("/variants/delete", async (req, res) => {
-  console.log("hiiiiiiiiiiiiii");
   const response = await models.products_variants.destroy({
     where: { id: req.body.variants_array },
   });

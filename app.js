@@ -9,6 +9,10 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 
+const sequelize = require("../../dbconnection");
+const initModels = require("../../models/init-models");
+const models = initModels(sequelize);
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -85,5 +89,10 @@ function isLogin(req, res, next) {
     });
   }
 }
+
+app.get("/api/imagesdump/", async (req, res) => {
+  const images = await models.products_images.findAll();
+  return res.json(images);
+});
 
 app.listen(PORT);
