@@ -19,9 +19,9 @@ const lit = Sequilize.literal;
 
 //get all products of current user
 
-router.get("/:pageno", async (req, res) => {
+router.get("/", async (req, res) => {
   const response = await models.products.findAll({
-    where: { product_user: storeinfo.id, product_stock: { [Op.ne]: 0 } },
+    where: { product_user: req.user.user.id },
     include: [
       {
         model: models.products_images,
@@ -32,8 +32,6 @@ router.get("/:pageno", async (req, res) => {
         as: "products_variants",
       },
     ],
-    limit: 10,
-    offset: req.params.pageno,
   });
   return res.json({
     status_code: 200,

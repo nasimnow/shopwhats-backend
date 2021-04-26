@@ -29,4 +29,22 @@ router.get("/:store", async (req, res) => {
   });
 });
 
+router.get("/products/:pageno", async (req, res) => {
+  const products = await models.products.findAll({
+    where: { product_user: storeinfo.id, product_stock: { [Op.ne]: 0 } },
+    include: [
+      {
+        model: models.products_images,
+        as: "products_images",
+      },
+      {
+        model: models.products_variants,
+        as: "products_variants",
+      },
+    ],
+    limit: 10,
+    offset: req.params.pageno,
+  });
+});
+
 module.exports = router;
