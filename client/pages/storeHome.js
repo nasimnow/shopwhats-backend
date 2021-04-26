@@ -29,9 +29,9 @@ router.get("/:store", async (req, res) => {
   });
 });
 
-router.get("/products/:pageno", async (req, res) => {
+router.get("/products/:storeid/:pageno", async (req, res) => {
   const products = await models.products.findAll({
-    where: { product_user: storeinfo.id, product_stock: { [Op.ne]: 0 } },
+    where: { product_user: req.params.storeid, product_stock: { [Op.ne]: 0 } },
     include: [
       {
         model: models.products_images,
@@ -44,6 +44,12 @@ router.get("/products/:pageno", async (req, res) => {
     ],
     limit: 10,
     offset: req.params.pageno,
+  });
+  return res.status(200).json({
+    status: true,
+    data: {
+      products,
+    },
   });
 });
 
