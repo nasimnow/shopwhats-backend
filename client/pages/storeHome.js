@@ -30,6 +30,8 @@ router.get("/:store", async (req, res) => {
 });
 
 router.get("/products/:storeid/:pageno", async (req, res) => {
+  limit = 10;
+  let offset = limit * +req.params.pageno - limit;
   const products = await models.products.findAll({
     where: { product_user: req.params.storeid, product_stock: { [Op.ne]: 0 } },
     include: [
@@ -42,8 +44,8 @@ router.get("/products/:storeid/:pageno", async (req, res) => {
         as: "products_variants",
       },
     ],
-    limit: 10,
-    offset: req.params.pageno,
+    limit: limit,
+    offset: offset,
   });
   return res.status(200).json({
     status: true,
