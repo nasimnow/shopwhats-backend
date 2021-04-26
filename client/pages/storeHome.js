@@ -19,25 +19,12 @@ router.get("/:store", async (req, res) => {
   const categories = await models.categories.findAll({
     where: { cat_user: storeinfo.id },
   });
-  const products = await models.products.findAll({
-    where: { product_user: storeinfo.id, product_stock: { [Op.ne]: 0 } },
-    include: [
-      {
-        model: models.products_images,
-        as: "products_images",
-      },
-      {
-        model: models.products_variants,
-        as: "products_variants",
-      },
-    ],
-  });
+
   return res.status(200).json({
     status: true,
     data: {
       storeinfo,
       categories,
-      products,
     },
   });
 });
