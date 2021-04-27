@@ -32,6 +32,7 @@ router.get("/", async (req, res) => {
         as: "products_variants",
       },
     ],
+    order: [["id", "desc"]],
   });
   return res.json({
     status_code: 200,

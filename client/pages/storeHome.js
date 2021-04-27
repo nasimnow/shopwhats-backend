@@ -30,10 +30,16 @@ router.get("/:store", async (req, res) => {
 });
 
 router.get("/products/:storeid/:pageno", async (req, res) => {
-  limit = 10;
-  let offset = limit * +req.params.pageno - limit;
+  const storeId = +req.params.storeid;
+  const pageNo = +req.params.pageno;
+  const limit = 10;
+  const productCount = await models.products.count({
+    where: { product_user: storeId, product_stock: { [Op.ne]: 0 } },
+  });
+  console.log(limit * pageNo >= productCount);
+  let offset = limit * pageNo - limit;
   const products = await models.products.findAll({
-    where: { product_user: req.params.storeid, product_stock: { [Op.ne]: 0 } },
+    where: { product_user: storeId, product_stock: { [Op.ne]: 0 } },
     include: [
       {
         model: models.products_images,
@@ -46,9 +52,11 @@ router.get("/products/:storeid/:pageno", async (req, res) => {
     ],
     limit: limit,
     offset: offset,
+    order: [["id", "desc"]],
   });
   return res.status(200).json({
     status: true,
+    isLastPage: limit * pageNo >= productCount,
     data: {
       products,
     },

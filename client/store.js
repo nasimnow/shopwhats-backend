@@ -86,9 +86,19 @@ router.get("/analytics/messagecount/:shopId", async (req, res) => {
 });
 
 //get all instock products of user
-router.get("/allproducts/:id/:cat", async (req, res) => {
+router.get("/allproducts/:id/:cat/:pageno", async (req, res) => {
+  const storeId = +req.params.id;
+  const productCat = req.params.cat;
+  const pageNo = +req.params.pageno;
+  const limit = 10;
+  let offset = limit * pageNo - limit;
+  let productCount = 0;
+
   let response = {};
-  if (req.params.cat == "all") {
+  if (productCat == "all") {
+    productCount = await models.products.count({
+      where: { product_user: storeId, product_stock: { [Op.ne]: 0 } },
+    });
     response = await models.products.findAll({
       where: { product_user: req.params.id, product_stock: { [Op.ne]: 0 } },
       include: [
@@ -97,13 +107,23 @@ router.get("/allproducts/:id/:cat", async (req, res) => {
           as: "products_images",
         },
       ],
+      limit: limit,
+      offset: offset,
+      order: [["id", "desc"]],
     });
   } else {
+    productCount = await models.products.count({
+      where: {
+        product_user: req.params.id,
+        product_stock: { [Op.ne]: 0 },
+        product_cat: +productCat,
+      },
+    });
     response = await models.products.findAll({
       where: {
         product_user: req.params.id,
         product_stock: { [Op.ne]: 0 },
-        product_cat: parseInt(req.params.cat),
+        product_cat: +productCat,
       },
       include: [
         {
@@ -111,6 +131,9 @@ router.get("/allproducts/:id/:cat", async (req, res) => {
           as: "products_images",
         },
       ],
+      limit: limit,
+      offset: offset,
+      order: [["id", "desc"]],
     });
   }
 
@@ -118,6 +141,7 @@ router.get("/allproducts/:id/:cat", async (req, res) => {
     status_code: 200,
     status: true,
     login: true,
+    isLastPage: limit * pageNo >= productCount,
     data: response,
   });
 });
