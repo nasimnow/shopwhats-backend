@@ -106,7 +106,12 @@ router.get("/allproducts/:id/:cat/:pageno", async (req, res) => {
           model: models.products_images,
           as: "products_images",
         },
+        {
+          model: models.products_variants,
+          as: "products_variants",
+        },
       ],
+
       limit: limit,
       offset: offset,
       order: [["id", "desc"]],
@@ -130,7 +135,12 @@ router.get("/allproducts/:id/:cat/:pageno", async (req, res) => {
           model: models.products_images,
           as: "products_images",
         },
+        {
+          model: models.products_variants,
+          as: "products_variants",
+        },
       ],
+
       limit: limit,
       offset: offset,
       order: [["id", "desc"]],
@@ -158,6 +168,10 @@ router.get("/search/products/:storeId/:searchTerm", async (req, res) => {
       {
         model: models.products_images,
         as: "products_images",
+      },
+      {
+        model: models.products_variants,
+        as: "products_variants",
       },
     ],
   });
