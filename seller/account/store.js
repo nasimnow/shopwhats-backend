@@ -21,6 +21,11 @@ router.get("/", async (req, res) => {
   return res.status(201).json({ status: true, data: results });
 });
 
+router.get("/status/storecount", async (req, res) => {
+  const response = await models.account.count();
+  return res.json({ count: response });
+});
+
 //update store details
 router.put("/", async (req, res) => {
   let store = {
