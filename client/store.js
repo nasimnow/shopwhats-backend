@@ -156,6 +156,12 @@ router.get("/allproducts/:id/:cat/:pageno", async (req, res) => {
   });
 });
 
+//get current account no
+router.get("/status/storecount", async (req, res) => {
+  const response = await models.account.count();
+  return res.json({ count: response });
+});
+
 // search products from store
 router.get("/search/products/:storeId/:searchTerm", async (req, res) => {
   const searchResponse = await models.products.findAll({
