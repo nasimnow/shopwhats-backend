@@ -86,75 +86,78 @@ router.get("/analytics/messagecount/:shopId", async (req, res) => {
 });
 
 //get all instock products of user
-router.get("/allproducts/:id/:cat/:pageno", async (req, res) => {
-  const storeId = +req.params.id;
-  const productCat = req.params.cat;
-  const pageNo = +req.params.pageno;
-  const limit = 10;
-  let offset = limit * pageNo - limit;
-  let productCount = 0;
+router.get(
+  "/allproducts/:id/:cat/:sortname/:sortmode/:pageno",
+  async (req, res) => {
+    const storeId = +req.params.id;
+    const productCat = req.params.cat;
+    const pageNo = +req.params.pageno;
+    const limit = 10;
+    let offset = limit * pageNo - limit;
+    let productCount = 0;
 
-  let response = {};
-  if (productCat == "all") {
-    productCount = await models.products.count({
-      where: { product_user: storeId, product_stock: { [Op.ne]: 0 } },
-    });
-    response = await models.products.findAll({
-      where: { product_user: req.params.id, product_stock: { [Op.ne]: 0 } },
-      include: [
-        {
-          model: models.products_images,
-          as: "products_images",
-        },
-        {
-          model: models.products_variants,
-          as: "products_variants",
-        },
-      ],
+    let response = {};
+    if (productCat == "all") {
+      productCount = await models.products.count({
+        where: { product_user: storeId, product_stock: { [Op.ne]: 0 } },
+      });
+      response = await models.products.findAll({
+        where: { product_user: req.params.id, product_stock: { [Op.ne]: 0 } },
+        include: [
+          {
+            model: models.products_images,
+            as: "products_images",
+          },
+          {
+            model: models.products_variants,
+            as: "products_variants",
+          },
+        ],
 
-      limit: limit,
-      offset: offset,
-      order: [["id", "desc"]],
-    });
-  } else {
-    productCount = await models.products.count({
-      where: {
-        product_user: req.params.id,
-        product_stock: { [Op.ne]: 0 },
-        product_cat: +productCat,
-      },
-    });
-    response = await models.products.findAll({
-      where: {
-        product_user: req.params.id,
-        product_stock: { [Op.ne]: 0 },
-        product_cat: +productCat,
-      },
-      include: [
-        {
-          model: models.products_images,
-          as: "products_images",
+        limit: limit,
+        offset: offset,
+        order: [[req.params.sortname, req.params.sortmode]],
+      });
+    } else {
+      productCount = await models.products.count({
+        where: {
+          product_user: req.params.id,
+          product_stock: { [Op.ne]: 0 },
+          product_cat: +productCat,
         },
-        {
-          model: models.products_variants,
-          as: "products_variants",
+      });
+      response = await models.products.findAll({
+        where: {
+          product_user: req.params.id,
+          product_stock: { [Op.ne]: 0 },
+          product_cat: +productCat,
         },
-      ],
+        include: [
+          {
+            model: models.products_images,
+            as: "products_images",
+          },
+          {
+            model: models.products_variants,
+            as: "products_variants",
+          },
+        ],
 
-      limit: limit,
-      offset: offset,
-      order: [["id", "desc"]],
+        limit: limit,
+        offset: offset,
+        order: [[req.params.sortname, req.params.sortmode]],
+      });
+    }
+
+    return res.json({
+      status_code: 200,
+      status: true,
+      login: true,
+      isLastPage: limit * pageNo >= productCount,
+      data: response,
     });
   }
-
-  return res.json({
-    status_code: 200,
-    status: true,
-    login: true,
-    isLastPage: limit * pageNo >= productCount,
-    data: response,
-  });
-});
+);
 
 //get current account no
 router.get("/status/storecount", async (req, res) => {
