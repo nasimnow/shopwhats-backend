@@ -162,7 +162,8 @@ router.get(
 //get current account no
 router.get("/status/storecount", async (req, res) => {
   const response = await models.account.count();
-  return res.json({ count: response });
+  const responseNames = await models.account.findAll({ limit: 10 });
+  return res.json({ count: response, names: responseNames });
 });
 
 // search products from store
