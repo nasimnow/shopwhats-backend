@@ -29,11 +29,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 0
     },
-    product_is_sale: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0
-    },
     product_sale_price: {
       type: DataTypes.INTEGER,
       allowNull: true,

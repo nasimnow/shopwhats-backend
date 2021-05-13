@@ -17,6 +17,8 @@ const { model } = require("../../dbconnection");
 const fn = Sequilize.fn;
 const lit = Sequilize.literal;
 
+const Op = Sequilize.Op;
+
 //get all products of current user
 
 router.get("/", async (req, res) => {
@@ -99,10 +101,25 @@ router.get("/:id", async (req, res) => {
 
 //add new product
 router.post("/", async (req, res) => {
-  const response = await models.products.create({
-    ...req.body,
-    product_user: req.user.user.id,
-  });
+  console.log(req.body);
+  const response = await models.products.create(
+    {
+      ...req.body,
+      product_user: req.user.user.id,
+    },
+    {
+      include: [
+        {
+          model: models.products_variants,
+          as: "products_variants",
+        },
+        {
+          model: models.products_images,
+          as: "products_images",
+        },
+      ],
+    }
+  );
   res.json({
     status_code: 201,
     status: true,
@@ -113,15 +130,55 @@ router.post("/", async (req, res) => {
 
 //update specific product
 router.put("/:id", async (req, res) => {
-  console.log(req.params.id);
-  const response = await models.products.update(req.body, {
+  ({
+    products_variants_new,
+    products_variants_old,
+    products_images_new,
+    products_images_old,
+  } = req.body);
+
+  //delete variants except
+  await models.products_variants.destroy({
+    where: {
+      id: { [Op.notIn]: products_variants_old.map((variant) => variant.id) },
+      product_id: req.params.id,
+    },
+  });
+
+  //delete images except
+  await models.products_images.destroy({
+    where: {
+      id: { [Op.notIn]: products_images_old.map((element) => element.id) },
+      product_id: req.params.id,
+    },
+  });
+
+  //add new variants
+  await models.products_variants.bulkCreate(products_variants_new);
+  //add new images
+  await models.products_images.bulkCreate(
+    products_images_new.map((element) => ({
+      product_image: element,
+      product_id: req.params.id,
+    }))
+  );
+
+  //update existing variants
+  products_variants_old.forEach(async (element) => {
+    await models.products_variants.update(element, {
+      where: { id: element.id },
+    });
+  });
+
+  await models.products.update(req.body, {
     where: { id: req.params.id },
   });
+
   return res.json({
     status_code: 201,
     status: true,
     login: true,
-    data: response,
+    data: { status: true },
   });
 });
 
@@ -159,8 +216,6 @@ router.put("/stock/:id", async (req, res) => {
 
 //add a variant to product
 router.post("/variants", async (req, res) => {
-  console.log(req.body.variants_array);
-
   const response = await models.products_variants.bulkCreate(
     req.body.variants_array
   );

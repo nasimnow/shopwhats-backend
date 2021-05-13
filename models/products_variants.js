@@ -18,6 +18,15 @@ module.exports = function(sequelize, DataTypes) {
     variant_name: {
       type: DataTypes.STRING(200),
       allowNull: false
+    },
+    variant_price: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    variant_sale_price: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     sequelize,
