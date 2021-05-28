@@ -49,4 +49,26 @@ router.post("/", async (req, res) => {
     });
   });
 });
+
+router.post("/password-reset", async (req, res) => {
+  const phoneNumber = req.body.phone;
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+  try {
+    await models.account.update(
+      { account_password: hashedPassword },
+      {
+        where: { account_phone: phoneNumber },
+      }
+    );
+    return res.json({
+      status: true,
+    });
+  } catch (error) {
+    return res.json({
+      status: false,
+    });
+  }
+});
+
 module.exports = router;
