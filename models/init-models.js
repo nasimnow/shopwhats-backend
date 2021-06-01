@@ -16,18 +16,50 @@ function initModels(sequelize) {
   var products_variants = _products_variants(sequelize, DataTypes);
   var store_analytics = _store_analytics(sequelize, DataTypes);
 
-  categories.belongsTo(account, { as: "cat_user_account", foreignKey: "cat_user"});
-  account.hasMany(categories, { as: "categories", foreignKey: "cat_user"});
-  products.belongsTo(account, { as: "product_user_account", foreignKey: "product_user"});
-  account.hasMany(products, { as: "products", foreignKey: "product_user"});
-  products.belongsTo(categories, { as: "product_cat_category", foreignKey: "product_cat"});
-  categories.hasMany(products, { as: "products", foreignKey: "product_cat"});
-  categories.belongsTo(categories_main, { as: "cat_parent_categories_main", foreignKey: "cat_parent"});
-  categories_main.hasMany(categories, { as: "categories", foreignKey: "cat_parent"});
-  products_images.belongsTo(products, { as: "product", foreignKey: "product_id"});
-  products.hasMany(products_images, { as: "products_images", foreignKey: "product_id"});
-  products_variants.belongsTo(products, { as: "product", foreignKey: "product_id"});
-  products.hasMany(products_variants, { as: "products_variants", foreignKey: "product_id"});
+  categories.belongsTo(account, {
+    as: "cat_user_account",
+    foreignKey: "cat_user",
+  });
+  account.hasMany(categories, { as: "categories", foreignKey: "cat_user" });
+  products.belongsTo(account, {
+    as: "product_user_account",
+    foreignKey: "product_user",
+  });
+  account.hasMany(products, { as: "products", foreignKey: "product_user" });
+  products.belongsTo(categories, {
+    as: "product_cat_category",
+    foreignKey: "product_cat",
+  });
+  categories.hasMany(products, { as: "products", foreignKey: "product_cat" });
+  categories.belongsTo(categories_main, {
+    as: "cat_parent_categories_main",
+    foreignKey: "cat_parent",
+  });
+  categories_main.hasMany(categories, {
+    as: "categories",
+    foreignKey: "cat_parent",
+  });
+  products_images.belongsTo(products, {
+    as: "product",
+    foreignKey: "product_id",
+  });
+  products.hasMany(products_images, {
+    as: "products_images",
+    foreignKey: "product_id",
+  });
+  products_variants.belongsTo(products, {
+    as: "product",
+    foreignKey: "product_id",
+  });
+  products.hasMany(products_variants, {
+    as: "products_variants",
+    foreignKey: "product_id",
+  });
+  store_analytics.belongsTo(account, { as: "account", foreignKey: "user_id" });
+  account.hasMany(store_analytics, {
+    as: "store_analytics",
+    foreignKey: "user_id",
+  });
 
   return {
     account,

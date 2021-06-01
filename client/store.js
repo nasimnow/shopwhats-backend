@@ -9,6 +9,7 @@ const models = initModels(sequelize);
 const Sequilize = require("sequelize");
 const fn = Sequilize.fn;
 const lit = Sequilize.literal;
+const col = Sequilize.col;
 const Op = Sequilize.Op;
 
 let todayDate = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
@@ -167,6 +168,36 @@ router.get("/status/storecount", async (req, res) => {
     order: [["id", "desc"]],
   });
   return res.json({ count: response, names: responseNames });
+});
+
+//get store anlaytics in bulk
+router.get("/status/views", async (req, res) => {
+  const responseViews = await models.store_analytics.findAll({
+    where: { date: "2021-04-21" },
+    attributes: {
+      include: [
+        [fn("SUM", col("store_analytics.store_views")), "total_views"],
+        [fn("SUM", col("store_analytics.message_clicks")), "total_clicks"],
+      ],
+    },
+  });
+  const responseStore = await models.store_analytics.findAll({
+    where: { date: "2021-04-21" },
+    order: [["store_views", "desc"]],
+
+    include: [
+      {
+        model: models.account,
+        as: "account",
+      },
+    ],
+  });
+  console.log(responseViews);
+  res.json({
+    total_views: responseViews[0].dataValues.total_views,
+    total_clicks: responseViews[0].dataValues.total_clicks,
+    stores: responseStore,
+  });
 });
 
 // search products from store
