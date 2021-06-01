@@ -173,7 +173,7 @@ router.get("/status/storecount", async (req, res) => {
 //get store anlaytics in bulk
 router.get("/status/views", async (req, res) => {
   const responseViews = await models.store_analytics.findAll({
-    where: { date: "2021-04-21" },
+    where: { date: todayDate },
     attributes: {
       include: [
         [fn("SUM", col("store_analytics.store_views")), "total_views"],
@@ -182,7 +182,7 @@ router.get("/status/views", async (req, res) => {
     },
   });
   const responseStore = await models.store_analytics.findAll({
-    where: { date: "2021-04-21" },
+    where: { date: todayDate },
     order: [["store_views", "desc"]],
 
     include: [
