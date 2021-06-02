@@ -35,6 +35,7 @@ router.get("/", async (req, res) => {
     status: true,
     login: true,
     data: results,
+    user: req.user.user,
   });
 });
 
