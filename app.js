@@ -29,6 +29,8 @@ app.use(
   require("./client/pages/productDetailed")
 );
 
+app.use("/api/payment", require("./payment/payment"));
+
 app.use("/api/scripts", require("./scripts/scripts"));
 
 app.use("/api/seller/register", require("./seller/account/register"));
