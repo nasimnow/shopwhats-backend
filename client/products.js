@@ -10,8 +10,8 @@ const lit = Sequilize.literal;
 const col = Sequilize.col;
 const Op = Sequilize.Op;
 
-router.get("/array", (req, res) => {
-  const responseProducts = models.products.findAll({
+router.post("/array", async (req, res) => {
+  const responseProducts = await models.products.findAll({
     where: { id: req.body.products_id },
     include: [
       {
@@ -23,6 +23,11 @@ router.get("/array", (req, res) => {
         as: "products_variants",
       },
     ],
+  });
+
+  return res.json({
+    status: true,
+    data: responseProducts,
   });
 });
 
