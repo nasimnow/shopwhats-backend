@@ -32,6 +32,7 @@ module.exports = async (userAddress) => {
   console.log(parseFloat(recieved[0].total_recieved));
   return {
     balance:
-      parseFloat(recieved[0].total_recieved) - parseFloat(sended[0].total_send),
+      parseFloat(recieved[0].total_recieved) -
+      parseFloat(sended[0].total_send || 0),
   };
 };
