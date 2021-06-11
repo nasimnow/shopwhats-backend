@@ -20,6 +20,7 @@ module.exports = async (userAddress) => {
     },
     raw: true,
   });
+
   const recieved = await models.coin_ledger.findAll({
     where: { reciever: userAddress },
     attributes: {
@@ -27,7 +28,8 @@ module.exports = async (userAddress) => {
     },
     raw: true,
   });
-
+  console.log(recieved);
+  console.log(userAddress);
   return {
     balance:
       parseFloat(recieved[0].total_recieved) - parseFloat(sended[0].total_send),
