@@ -29,7 +29,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     amount: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       allowNull: false
     },
     referrer: {
