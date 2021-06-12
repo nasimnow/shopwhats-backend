@@ -52,6 +52,21 @@ router.put("/status/:id", async (req, res) => {
   });
 });
 
+//add user notification token to database
+router.post("/addnotiftoken", async (req, res) => {
+  const response = await models.account.update(
+    { account_notif_token: req.body.account_notif_token },
+    { where: { id: req.user.user.id } }
+  );
+
+  return res.json({
+    status_code: 201,
+    status: true,
+    login: true,
+    data: response,
+  });
+});
+
 // add profile image to database
 router.post("/addprofile", async (req, res) => {
   const response = await models.account.update(

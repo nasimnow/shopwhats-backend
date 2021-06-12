@@ -43,6 +43,10 @@ module.exports = function(sequelize, DataTypes) {
     account_store_address: {
       type: DataTypes.STRING(500),
       allowNull: true
+    },
+    account_notif_token: {
+      type: DataTypes.STRING(1000),
+      allowNull: true
     }
   }, {
     sequelize,
