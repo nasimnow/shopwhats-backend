@@ -15,9 +15,14 @@ const lit = Sequilize.literal;
 
 //get all details about loginned user
 router.get("/", async (req, res) => {
-  await models.account.update({
-    account_last_login: moment().tz("Asia/Kolkata"),
-  });
+  await models.account.update(
+    {
+      account_last_login: moment().tz("Asia/Kolkata"),
+    },
+    {
+      where: { id: req.user.user.id },
+    }
+  );
   const results = await models.account.findByPk(req.user.user.id, {
     attributes: { exclude: ["account_password"] },
   });
