@@ -75,6 +75,7 @@ function initModels(sequelize) {
     as: "store_analytics",
     foreignKey: "user_id",
   });
+
   return {
     account,
     categories,

@@ -4,7 +4,7 @@ const router = express.Router();
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
-
+const moment = rquire("moment-timezone");
 const sequelize = require("../../dbconnection");
 const initModels = require("../../models/init-models");
 const models = initModels(sequelize);
@@ -15,6 +15,9 @@ const lit = Sequilize.literal;
 
 //get all details about loginned user
 router.get("/", async (req, res) => {
+  await models.account.update({
+    account_last_login: moment().tz("Asia/Kolkata"),
+  });
   const results = await models.account.findByPk(req.user.user.id, {
     attributes: { exclude: ["account_password"] },
   });

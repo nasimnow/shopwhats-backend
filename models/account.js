@@ -47,6 +47,14 @@ module.exports = function(sequelize, DataTypes) {
     account_notif_token: {
       type: DataTypes.STRING(1000),
       allowNull: true
+    },
+    account_last_login: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    account_register_date: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     sequelize,

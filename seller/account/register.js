@@ -6,6 +6,7 @@ const sequelize = require("../../dbconnection");
 const initModels = require("../../models/init-models");
 const models = initModels(sequelize);
 const Sequilize = require("sequelize");
+const moment = require("moment-timezone");
 
 router.post("/", async (req, res) => {
   try {
@@ -27,6 +28,7 @@ router.post("/", async (req, res) => {
       account_store_link: storeLinkGen,
       account_password: hashedPassword,
       account_whatsapp: req.body.account_phone,
+      account_register_date: moment().tz("Asia/Kolkata"),
     });
     return res.json({
       status: true,
