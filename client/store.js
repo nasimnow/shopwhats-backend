@@ -114,7 +114,7 @@ router.get(
     let productCount = 0;
 
     let response = {};
-    if (productCat == "all") {
+    if (["all", "popular"].includes(productCat)) {
       productCount = await models.products.count({
         where: { product_user: storeId, product_stock: { [Op.ne]: 0 } },
       });
@@ -133,7 +133,10 @@ router.get(
 
         limit: limit,
         offset: offset,
-        order: [[req.params.sortname, req.params.sortmode]],
+        order: [
+          [req.params.sortname, req.params.sortmode],
+          productCat === "popular" && ["id", "desc"],
+        ],
       });
     } else {
       productCount = await models.products.count({
