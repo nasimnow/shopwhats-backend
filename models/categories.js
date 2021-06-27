@@ -26,6 +26,10 @@ module.exports = function(sequelize, DataTypes) {
         model: 'account',
         key: 'id'
       }
+    },
+    cat_clicks: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {
     sequelize,

@@ -65,6 +65,22 @@ router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
   res.json({ status: true });
 });
 
+//record category click
+router.get("/analytics/catclick/:id", async (req, res) => {
+  await models.categories.increment("cat_clicks", {
+    where: { id: req.params.id },
+  });
+  return res.json({ status: "success" });
+});
+
+//record product click
+router.get("/analytics/productclick/:id", async (req, res) => {
+  await models.products.increment("product_clicks", {
+    where: { id: req.params.id },
+  });
+  return res.json({ status: "success" });
+});
+
 //update store whatsapp button clicks
 router.get("/analytics/messagecount/:shopId", async (req, res) => {
   let shopId = req.params.shopId;

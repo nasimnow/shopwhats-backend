@@ -50,11 +50,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     account_last_login: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     account_register_date: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,

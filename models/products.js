@@ -20,11 +20,16 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     product_stock: {
-      type: DataTypes.TINYINT,
+      type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: 1
     },
     product_price: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    product_is_sale: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
@@ -45,6 +50,10 @@ module.exports = function(sequelize, DataTypes) {
         model: 'categories',
         key: 'id'
       }
+    },
+    product_clicks: {
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   }, {
     sequelize,

@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     date: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: Sequelize.fn('current_timestamp')
+      defaultValue: Sequelize.Sequelize.fn('current_timestamp')
     },
     sender: {
       type: DataTypes.INTEGER,
