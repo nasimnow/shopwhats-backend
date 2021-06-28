@@ -18,6 +18,10 @@ router.get("/:store", async (req, res) => {
 
   const categories = await models.categories.findAll({
     where: { cat_user: storeinfo.id },
+    order: [
+      ["cat_clicks", "desc"],
+      ["id", "desc"],
+    ],
   });
 
   return res.status(200).json({
