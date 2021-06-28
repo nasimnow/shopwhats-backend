@@ -135,7 +135,7 @@ router.get(
         offset: offset,
         order: [
           [req.params.sortname, req.params.sortmode],
-          productCat === "popular" && ["id", "desc"],
+          ["id", "desc"],
         ],
       });
     } else {
