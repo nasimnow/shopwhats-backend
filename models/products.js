@@ -53,7 +53,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     product_clicks: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     sequelize,

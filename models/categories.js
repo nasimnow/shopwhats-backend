@@ -29,7 +29,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     cat_clicks: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     sequelize,
