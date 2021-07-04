@@ -67,7 +67,7 @@ router.post("/new", async (req, res) => {
 //check store link (new)
 const checkStoreUsername = async (storeName) => {
   //replace space with underscore
-  storeName = storeName.replace(/ /g, "_");
+  storeName = storeName.replace(/ /g, "");
   const userNameCount = await models.account.count({
     where: { account_store_link: storeName },
   });
