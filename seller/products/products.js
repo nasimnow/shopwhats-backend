@@ -1,20 +1,11 @@
-const mysqlConnection = require("../../connection");
 const express = require("express");
 const router = express.Router();
-const fs = require("fs");
-const path = require("path");
-const multer = require("multer");
 const moment = require("moment");
-const Jimp = require("jimp");
 const deleteProductsByArray = require("../utils/deleteProducts");
-
 const sequelize = require("../../dbconnection");
 const initModels = require("../../models/init-models");
 const models = initModels(sequelize);
 const Sequilize = require("sequelize");
-const products = require("../../models/products");
-const { model } = require("../../dbconnection");
-const fn = Sequilize.fn;
 const lit = Sequilize.literal;
 
 const Op = Sequilize.Op;
@@ -260,84 +251,6 @@ router.get("/catogories/:cat", async (req, res) => {
   });
 });
 
-// let productStorage = multer.diskStorage({
-//   destination: function (req, res, callback) {
-//     let dir = "./product-images/min";
-//     let imageDir = "./product-images";
-//     if (!fs.existsSync(dir)) {
-//       fs.mkdirSync(dir);
-//     }
-//     callback(null, imageDir);
-//   },
-//   filename: function (req, file, callback) {
-//     callback(
-//       null,
-//       file.fieldname + Date.now() + path.extname(file.originalname)
-//     );
-//   },
-// });
-
-// let upload = multer({ storage: productStorage }).array("product_image", 6);
-// //upload product images to server
-// router.post("/imageupload/:productId", upload, async (req, res) => {
-//   let arrayDb = [];
-//   req.files.map((file) => arrayDb.push([req.params.productId, file.filename]));
-//   for (let i = 0; i < req.files.length; i++) {
-//     Jimp.read(req.files[i].path)
-//       .then((lenna) => {
-//         return lenna
-//           .resize(Jimp.AUTO, 400)
-//           .quality(60)
-//           .write("./product-images/min/" + req.files[i].filename);
-//       })
-//       .catch((err) => {
-//         console.error(err);
-//       });
-//   }
-//   let sql = "INSERT INTO products_images (product_id, product_image) VALUES ?";
-//   console.log(arrayDb);
-//   let query = mysqlConnection.query(sql, [arrayDb], (err, result) => {
-//     if (err)
-//       return res.json({
-//         status_code: 500,
-//         status: false,
-//         error: { message: err },
-//       });
-
-//     return res.json({
-//       status_code: 200,
-//       status: true,
-//       login: true,
-//       data: { images: arrayDb },
-//     });
-//   });
-// });
-
-//add product images to database
-router.post("/imageAdd/:productId", (req, res) => {
-  let arrayDb = [];
-  req.body.product_images.map((file) =>
-    arrayDb.push([req.params.productId, file])
-  );
-  let sql = "INSERT INTO products_images (product_id, product_image) VALUES ?";
-  console.log(arrayDb);
-  let query = mysqlConnection.query(sql, [arrayDb], (err, result) => {
-    if (err)
-      return res.json({
-        status_code: 500,
-        status: false,
-        error: { message: err },
-      });
-
-    return res.json({
-      status_code: 200,
-      status: true,
-      login: true,
-      data: { images: arrayDb },
-    });
-  });
-});
-
 //remove already uploaded image from database
 //sent images as array
 router.post("/imageDelete/:pid", async (req, res) => {
@@ -348,15 +261,6 @@ router.post("/imageDelete/:pid", async (req, res) => {
   const dbResponse = await models.products_images.destroy({
     where: { product_id: req.params.pid, id: imagestoDeleteId },
   });
-  // //delete images from storage
-  // for (let i = 0; i < imagesToDeleteFiles.length; i++) {
-  //   try {
-  //     fs.unlinkSync(`./product-images/${imagesToDeleteFiles[i]}`);
-  //     fs.unlinkSync(`./product-images/min/${imagesToDeleteFiles[i]}`);
-  //   } catch (error) {
-  //     console.log("cant delete file");
-  //   }
-  // }
   return res.json({
     status_code: 201,
     status: true,

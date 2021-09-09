@@ -1,4 +1,3 @@
-const mysqlConnection = require("../../connection");
 const express = require("express");
 const router = express.Router();
 const deleteProductsByArray = require("../utils/deleteProducts");
@@ -7,7 +6,6 @@ const sequelize = require("../../dbconnection");
 const initModels = require("../../models/init-models");
 const models = initModels(sequelize);
 const Sequilize = require("sequelize");
-const products = require("../../models/products");
 const fn = Sequilize.fn;
 const col = Sequilize.col;
 

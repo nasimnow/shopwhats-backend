@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const mysqlConnection = require("../../connection");
 const jwt = require("jsonwebtoken");
 
 const sequelize = require("../../dbconnection");

@@ -1,7 +1,5 @@
-const mysqlConnection = require("../connection");
 const express = require("express");
 const router = express.Router();
-const moment = require("moment-timezone");
 
 const sequelize = require("../dbconnection");
 const initModels = require("../models/init-models");
