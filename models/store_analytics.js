@@ -9,12 +9,15 @@ module.exports = function(sequelize, DataTypes) {
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'account',
+        key: 'id'
+      }
     },
     date: {
-      type: DataTypes.DATEONLY,
-      allowNull: false,
-      defaultValue: Sequelize.Sequelize.fn('current_timestamp')
+      type: DataTypes.STRING(30),
+      allowNull: false
     },
     store_views: {
       type: DataTypes.INTEGER,

@@ -20,8 +20,6 @@ app.get("/test", (req, res) => {
   return res.send("its working");
 });
 
-app.use("/api/saavcoin/", require("./saavcoin/index"));
-
 app.use("/api/client/store", require("./client/store"));
 
 app.use("/api/client/products", require("./client/products"));

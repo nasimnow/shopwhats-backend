@@ -44,7 +44,6 @@ router.get("/count", async (req, res) => {
     attributes: ["store_views", "message_clicks"],
     where: { user_id: req.user.user.id, date: today },
   });
-  console.log(views);
   const products_count = await models.products.count({
     where: { product_user: userId },
   });

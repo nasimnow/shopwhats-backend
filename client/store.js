@@ -6,12 +6,12 @@ const sequelize = require("../dbconnection");
 const initModels = require("../models/init-models");
 const models = initModels(sequelize);
 const Sequilize = require("sequelize");
+const { DateTime } = require("luxon");
 const fn = Sequilize.fn;
-const lit = Sequilize.literal;
 const col = Sequilize.col;
 const Op = Sequilize.Op;
 
-let todayDate = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
+const todayDate = DateTime.now().setZone("Asia/Kolkata").toISODate();
 //get all details of current store user by link
 router.get("/:store", (req, res) => {
   const results = models.account.findOne({
@@ -47,7 +47,7 @@ router.get("/byid/:storeId", async (req, res) => {
 
 router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
   const data = await models.store_analytics.findOne({
-    where: { user_id: req.params.shopId, date: todayDate },
+    where: { user_id: req.params.shopId, date: todayDate.toString() },
   });
   console.log(data);
   if (data) {
@@ -59,6 +59,7 @@ router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
       user_id: req.params.shopId,
       store_views: 1,
       message_clicks: 0,
+      date: todayDate,
     });
   }
   res.json({ status: true });
@@ -82,11 +83,9 @@ router.get("/analytics/productclick/:id", async (req, res) => {
 
 //update store whatsapp button clicks
 router.get("/analytics/messagecount/:shopId", async (req, res) => {
-  let shopId = req.params.shopId;
   const data = await models.store_analytics.findOne({
     where: { user_id: req.params.shopId, date: todayDate },
   });
-
   if (data) {
     await models.store_analytics.increment("message_clicks", {
       where: { id: data.id },
@@ -96,6 +95,7 @@ router.get("/analytics/messagecount/:shopId", async (req, res) => {
       user_id: req.params.shopId,
       store_views: 1,
       message_clicks: 1,
+      date: todayDate,
     });
   }
   res.json({ status: true });
@@ -210,7 +210,6 @@ router.get("/status/views", async (req, res) => {
       },
     ],
   });
-  console.log(responseViews);
   res.json({
     total_views: responseViews[0].dataValues.total_views,
     total_clicks: responseViews[0].dataValues.total_clicks,
