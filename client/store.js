@@ -206,7 +206,7 @@ router.get("/status/views", async (req, res) => {
     include: [
       {
         model: models.account,
-        as: "account",
+        as: "user",
       },
     ],
   });
