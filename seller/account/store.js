@@ -1,15 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const fs = require("fs");
-const path = require("path");
-const multer = require("multer");
+
 const moment = require("moment-timezone");
 const sequelize = require("../../dbconnection");
 const initModels = require("../../models/init-models");
 const models = initModels(sequelize);
 const Sequilize = require("sequelize");
-
-const fn = Sequilize.fn;
 const lit = Sequilize.literal;
 
 //get all details about loginned user
