@@ -36,13 +36,16 @@ router.get("/categories/all/:userId", async (req, res) => {
 
 //get all details of current store by id
 router.get("/byid/:storeId", async (req, res) => {
-  const results = await models.account.findByPk(req.params.storeId);
-  if (results?.length < 1)
-    return res
-      .status(400)
-      .json({ message: { messageBody: err, status: false } });
+  if (req.params.storeId) {
+    const results = await models.account.findByPk(req.params.storeId);
+    if (results.length < 1)
+      return res
+        .status(400)
+        .json({ message: { messageBody: err, status: false } });
 
-  return res.status(201).json({ status: true, data: results });
+    return res.status(201).json({ status: true, data: results });
+  }
+  return res.status(400).json({ message: { messageBody: err, status: false } });
 });
 
 router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
