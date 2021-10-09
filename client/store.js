@@ -40,12 +40,12 @@ router.get("/byid/:storeId", async (req, res) => {
     const results = await models.account.findByPk(req.params.storeId);
     if (results?.length < 1)
       return res
-        .status(500)
+        .status(400)
         .json({ message: { messageBody: err, status: false } });
 
     return res.status(201).json({ status: true, data: results });
   }
-  return res.status(500).json({ message: { messageBody: err, status: false } });
+  return res.status(400).json({ message: { messageBody: err, status: false } });
 });
 
 router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
