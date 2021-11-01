@@ -53,6 +53,8 @@ app.use(
 
 app.use("/api/seller/store", isLogin, require("./seller/account/store"));
 
+app.use("/api/seller/links", isLogin, require("./seller/links/links"));
+
 app.get("/api/seller/loginstatus", (req, res) => {
   if (req.isAuthenticated()) {
     return res.status(201).json({

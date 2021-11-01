@@ -1,1 +1,1 @@
-sequelize-auto -o "./models" -d fliqcwco_shopwhats -h localhost -u root -p 3306 -x silverstar -e mysql
+sequelize-auto -o "./models" -d shopwhats -h localhost -u root -p 3306 -x silverstar123 -e mysql

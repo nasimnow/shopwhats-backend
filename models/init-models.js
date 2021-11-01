@@ -2,6 +2,7 @@ var DataTypes = require("sequelize").DataTypes;
 var _account = require("./account");
 var _categories = require("./categories");
 var _categories_main = require("./categories_main");
+var _links = require("./links");
 var _products = require("./products");
 var _products_images = require("./products_images");
 var _products_variants = require("./products_variants");
@@ -11,6 +12,7 @@ function initModels(sequelize) {
   var account = _account(sequelize, DataTypes);
   var categories = _categories(sequelize, DataTypes);
   var categories_main = _categories_main(sequelize, DataTypes);
+  var links = _links(sequelize, DataTypes);
   var products = _products(sequelize, DataTypes);
   var products_images = _products_images(sequelize, DataTypes);
   var products_variants = _products_variants(sequelize, DataTypes);
@@ -35,6 +37,7 @@ function initModels(sequelize) {
     account,
     categories,
     categories_main,
+    links,
     products,
     products_images,
     products_variants,
