@@ -7,8 +7,14 @@ const models = initModels(sequelize);
 
 //add or edit links
 router.post("/", async (req, res) => {
-  const { id, links } = req.body;
-  if (id) {
+  const { links } = req.body;
+  const isLinkExist = await models.links.findOne({
+    where: {
+      account_id: req.user.user.id,
+    },
+  });
+
+  if (isLinkExist) {
     try {
       await models.links.update(
         {
@@ -16,7 +22,7 @@ router.post("/", async (req, res) => {
         },
         {
           where: {
-            id,
+            account_id: req.user.user.id,
           },
         }
       );
