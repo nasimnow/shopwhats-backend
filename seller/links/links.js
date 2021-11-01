@@ -32,7 +32,7 @@ router.post("/", async (req, res) => {
 //get links of a user
 router.get("/", async (req, res) => {
   try {
-    const links = await models.links.findOne({
+    const links = await models.links.findAll({
       where: {
         account_id: req.user.user.id,
       },
