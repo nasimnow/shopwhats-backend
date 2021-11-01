@@ -20,6 +20,8 @@ function initModels(sequelize) {
 
   categories.belongsTo(account, { as: "cat_user_account", foreignKey: "cat_user"});
   account.hasMany(categories, { as: "categories", foreignKey: "cat_user"});
+  links.belongsTo(account, { as: "account", foreignKey: "account_id"});
+  account.hasMany(links, { as: "links", foreignKey: "account_id"});
   products.belongsTo(account, { as: "product_user_account", foreignKey: "product_user"});
   account.hasMany(products, { as: "products", foreignKey: "product_user"});
   store_analytics.belongsTo(account, { as: "user", foreignKey: "user_id"});

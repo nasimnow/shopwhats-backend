@@ -9,10 +9,26 @@ module.exports = function(sequelize, DataTypes) {
     },
     account_id: {
       type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'account',
+        key: 'id'
+      }
+    },
+    type: {
+      type: DataTypes.STRING(20),
       allowNull: false
     },
-    links: {
-      type: DataTypes.STRING(5000),
+    name: {
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
+    url: {
+      type: DataTypes.STRING(1000),
+      allowNull: false
+    },
+    position: {
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {
@@ -26,6 +42,13 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "account_id",
+        using: "BTREE",
+        fields: [
+          { name: "account_id" },
         ]
       },
     ]

@@ -8,51 +8,24 @@ const models = initModels(sequelize);
 //add or edit links
 router.post("/", async (req, res) => {
   const { links } = req.body;
-  const isLinkExist = await models.links.findOne({
-    where: {
-      account_id: req.user.user.id,
-    },
-  });
-
-  if (isLinkExist) {
-    try {
-      await models.links.update(
-        {
-          links,
-        },
-        {
-          where: {
-            account_id: req.user.user.id,
-          },
-        }
-      );
-      res.status(200).json({
-        success: true,
-        message: "Update success",
-      });
-    } catch (error) {
-      res.status(400).json({
-        success: false,
-        message: "Update failed",
-      });
-    }
-  } else {
-    try {
-      await models.links.create({
-        account_id: req.user.user.id,
-        links,
-      });
-      res.json({
-        success: true,
-        message: "Create success",
-      });
-    } catch (error) {
-      console.log(error);
-      res.json({
-        success: false,
-        message: "Create failed",
-      });
-    }
+  try {
+    links.forEach(async (link) => {
+      link = { ...link, account_id: req.user.user.id };
+      if (link.id) {
+        await models.links.update(link, { where: { id: link.id } });
+      } else {
+        await models.links.create(link);
+      }
+    });
+    res.status(200).send({
+      success: true,
+      message: "Links updated successfully",
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
   }
 });
 
