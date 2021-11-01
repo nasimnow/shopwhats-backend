@@ -50,4 +50,24 @@ router.post("/", async (req, res) => {
   }
 });
 
+//get links of a user
+router.get("/", async (req, res) => {
+  try {
+    const links = await models.links.findOne({
+      where: {
+        account_id: req.user.user.id,
+      },
+    });
+    res.json({
+      success: true,
+      data: links,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: "Get failed",
+    });
+  }
+});
+
 module.exports = router;
