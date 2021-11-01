@@ -17,9 +17,15 @@ router.post("/", async (req, res) => {
         await models.links.create(link);
       }
     });
+    const linksNew = await models.links.findAll({
+      where: {
+        account_id: req.user.user.id,
+      },
+    });
     res.status(200).send({
       success: true,
       message: "Links updated successfully",
+      data: linksNew,
     });
   } catch (error) {
     res.status(400).send({
