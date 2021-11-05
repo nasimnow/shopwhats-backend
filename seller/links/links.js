@@ -67,7 +67,7 @@ router.get("/", async (req, res) => {
       where: {
         account_id: req.user.user.id,
       },
-      order: [["id", "desc"]],
+      order: [["position", "desc"]],
     });
     res.json({
       success: true,
