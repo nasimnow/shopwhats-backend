@@ -12,7 +12,7 @@ router.get("/:account_username", async (req, res) => {
     const account_info = await models.account.findOne({
       where: { account_store_link: req.params.account_username },
     });
-    if (!storeinfo)
+    if (!account_info)
       return res
         .status(404)
         .json({ status: false, error: "User Doesnt Exist" });
@@ -28,6 +28,7 @@ router.get("/:account_username", async (req, res) => {
       data: links,
     });
   } catch (error) {
+    console.log(error);
     res.json({
       success: false,
       message: "Get failed",
