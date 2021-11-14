@@ -25,7 +25,8 @@ router.get("/:account_username", async (req, res) => {
     });
     res.json({
       success: true,
-      data: links,
+      account_info,
+      links,
     });
   } catch (error) {
     console.log(error);
