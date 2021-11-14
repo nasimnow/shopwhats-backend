@@ -34,3 +34,5 @@ router.get("/:account_username", async (req, res) => {
     });
   }
 });
+
+module.exports = router;
