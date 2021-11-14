@@ -9,13 +9,21 @@ const Op = Sequilize.Op;
 
 router.get("/:account_username", async (req, res) => {
   try {
-    const account_info = await models.account.findOne({
+    const account_info_raw = await models.account.findOne({
       where: { account_store_link: req.params.account_username },
     });
-    if (!account_info)
+    if (!account_info_raw)
       return res
         .status(404)
         .json({ status: false, error: "User Doesnt Exist" });
+
+    const {
+      account_password,
+      account_last_login,
+      account_register_date,
+      account_notif_token,
+      ...account_info
+    } = account_info_raw;
 
     const links = await models.links.findAll({
       where: {
