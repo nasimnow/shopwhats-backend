@@ -25,6 +25,7 @@ app.use("/api/client/store", require("./client/store"));
 app.use("/api/client/products", require("./client/products"));
 
 app.use("/api/client/storehomepage", require("./client/pages/storeHome"));
+app.use("/api/client/links", require("./client/pages/linksFront"));
 
 app.use(
   "/api/client/productdetailedpage",
@@ -97,10 +98,5 @@ function isLogin(req, res, next) {
     });
   }
 }
-
-app.get("/api/imagesdump/", async (req, res) => {
-  const images = await models.products_images.findAll();
-  return res.json(images);
-});
 
 app.listen(PORT);
