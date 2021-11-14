@@ -23,7 +23,7 @@ router.get("/:account_username", async (req, res) => {
       account_register_date,
       account_notif_token,
       ...account_info
-    } = account_info_raw;
+    } = account_info_raw.dataValues;
 
     const links = await models.links.findAll({
       where: {
