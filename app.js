@@ -38,6 +38,8 @@ app.use("/api/scripts", require("./scripts/scripts"));
 
 app.use("/api/seller/register", require("./seller/account/register"));
 
+app.use("/api/seller/settings", isLogin, require("./seller/account/settings"));
+
 app.use("/api/seller/login", require("./seller/account/login"));
 
 app.get("/api/dir", (req, res) => res.send(__dirname));

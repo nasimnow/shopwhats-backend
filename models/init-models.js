@@ -6,6 +6,7 @@ var _links = require("./links");
 var _products = require("./products");
 var _products_images = require("./products_images");
 var _products_variants = require("./products_variants");
+var _settings = require("./settings");
 var _store_analytics = require("./store_analytics");
 
 function initModels(sequelize) {
@@ -16,6 +17,7 @@ function initModels(sequelize) {
   var products = _products(sequelize, DataTypes);
   var products_images = _products_images(sequelize, DataTypes);
   var products_variants = _products_variants(sequelize, DataTypes);
+  var settings = _settings(sequelize, DataTypes);
   var store_analytics = _store_analytics(sequelize, DataTypes);
 
   categories.belongsTo(account, { as: "cat_user_account", foreignKey: "cat_user"});
@@ -24,6 +26,8 @@ function initModels(sequelize) {
   account.hasMany(links, { as: "links", foreignKey: "account_id"});
   products.belongsTo(account, { as: "product_user_account", foreignKey: "product_user"});
   account.hasMany(products, { as: "products", foreignKey: "product_user"});
+  settings.belongsTo(account, { as: "user", foreignKey: "user_id"});
+  account.hasMany(settings, { as: "settings", foreignKey: "user_id"});
   store_analytics.belongsTo(account, { as: "user", foreignKey: "user_id"});
   account.hasMany(store_analytics, { as: "store_analytics", foreignKey: "user_id"});
   products.belongsTo(categories, { as: "product_cat_category", foreignKey: "product_cat"});
@@ -43,6 +47,7 @@ function initModels(sequelize) {
     products,
     products_images,
     products_variants,
+    settings,
     store_analytics,
   };
 }
