@@ -25,6 +25,12 @@ router.get("/:account_username", async (req, res) => {
       ...account_info
     } = account_info_raw.dataValues;
 
+    const user_settings = await models.settings.findOne({
+      where: {
+        user_id: account_info.id,
+      },
+    });
+
     const links = await models.links.findAll({
       where: {
         account_id: account_info.id,
@@ -35,6 +41,7 @@ router.get("/:account_username", async (req, res) => {
       success: true,
       account_info,
       links,
+      user_settings,
     });
   } catch (error) {
     console.log(error);

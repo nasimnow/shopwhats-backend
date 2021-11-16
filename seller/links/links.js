@@ -76,8 +76,7 @@ router.get("/", async (req, res) => {
     });
     res.json({
       success: true,
-      data: links,
-      user_settings,
+      data: { links, user_settings },
     });
   } catch (error) {
     res.json({
