@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
       user_id: req.user.user.id,
     },
   });
-  console.log(user_settings);
+
   if (user_settings) {
     return res.json({ user_settings, status: true });
   }
