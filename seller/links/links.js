@@ -44,6 +44,23 @@ router.post("/add", async (req, res) => {
   }
 });
 
+router.post("/edit", async (req, res) => {
+  const { link } = req.body;
+  try {
+    let resp = await models.links.update(link, { where: { id: link.id } });
+    res.status(200).send({
+      success: true,
+      message: "Link updated successfully",
+      data: resp,
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
 router.post("/delete/:id", async (req, res) => {
   const { id } = req.params;
   try {
