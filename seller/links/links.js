@@ -63,6 +63,16 @@ router.post("/delete/:id", async (req, res) => {
 //get links of a user
 router.get("/", async (req, res) => {
   try {
+    const account_info_raw = await models.account.findOne({
+      where: { id: req.user.user.id },
+    });
+    const {
+      account_password,
+      account_last_login,
+      account_register_date,
+      account_notif_token,
+      ...account_info
+    } = account_info_raw.dataValues;
     const user_settings = await models.settings.findOne({
       where: {
         user_id: req.user.user.id,
@@ -76,7 +86,7 @@ router.get("/", async (req, res) => {
     });
     res.json({
       success: true,
-      data: { links, user_settings },
+      data: { links, user_settings, account_info },
     });
   } catch (error) {
     res.json({
