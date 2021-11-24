@@ -32,6 +32,15 @@ router.post("/", async (req, res) => {
     });
   }
 
+  if (user.account_store_status === 3) {
+    return res.json({
+      status_code: 400,
+      status: false,
+      login: false,
+      error: { message: "Your account is deactivated", code: 103 },
+    });
+  }
+
   //credentials validated and generates jwt token
   jwt.sign({ user }, "secretkey", { expiresIn: "14d" }, (err, token) => {
     if (err) {
