@@ -20,7 +20,6 @@ router.post("/", async (req, res) => {
         message: "Already Registered",
       });
     let storeLinkGen = await checkStoreUsername(req.body.account_store);
-    console.log(storeLinkGen);
     const addUser = await models.account.create({
       account_phone: req.body.account_phone,
       account_store: req.body.account_store,
@@ -50,7 +49,6 @@ router.post("/new", async (req, res) => {
       message: "Already Registered",
     });
   let storeLinkGen = await checkStoreUsername(req.body.account_store);
-  console.log(storeLinkGen);
   const addUser = await models.account.create({
     account_phone: req.body.account_phone,
     account_store: req.body.account_store,

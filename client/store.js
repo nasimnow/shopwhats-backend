@@ -11,7 +11,8 @@ const fn = Sequilize.fn;
 const col = Sequilize.col;
 const Op = Sequilize.Op;
 
-const todayDate = DateTime.now().setZone("Asia/Kolkata").toISODate();
+const todayDate = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
+console.log("🚀 ~ file: store.js ~ line 15 ~ todayDate", todayDate);
 //get all details of current store user by link
 router.get("/:store", (req, res) => {
   const results = models.account.findOne({
@@ -49,23 +50,27 @@ router.get("/byid/:storeId", async (req, res) => {
 });
 
 router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
-  const data = await models.store_analytics.findOne({
-    where: { user_id: req.params.shopId, date: todayDate.toString() },
-  });
-  console.log(data);
-  if (data) {
-    await models.store_analytics.increment("store_views", {
-      where: { id: data.id },
+  try {
+    const data = await models.store_analytics.findOne({
+      where: { user_id: req.params.shopId, date: todayDate.toString() },
     });
-  } else {
-    await models.store_analytics.create({
-      user_id: req.params.shopId,
-      store_views: 1,
-      message_clicks: 0,
-      date: todayDate,
-    });
+
+    if (data) {
+      await models.store_analytics.increment("store_views", {
+        where: { id: data.id },
+      });
+    } else {
+      await models.store_analytics.create({
+        user_id: req.params.shopId,
+        store_views: 1,
+        message_clicks: 0,
+        date: todayDate,
+      });
+    }
+    res.json({ status: true });
+  } catch (error) {
+    console.log(error);
   }
-  res.json({ status: true });
 });
 
 //record category click
@@ -86,22 +91,26 @@ router.get("/analytics/productclick/:id", async (req, res) => {
 
 //update store whatsapp button clicks
 router.get("/analytics/messagecount/:shopId", async (req, res) => {
-  const data = await models.store_analytics.findOne({
-    where: { user_id: req.params.shopId, date: todayDate },
-  });
-  if (data) {
-    await models.store_analytics.increment("message_clicks", {
-      where: { id: data.id },
+  try {
+    const data = await models.store_analytics.findOne({
+      where: { user_id: req.params.shopId, date: todayDate },
     });
-  } else {
-    await models.store_analytics.create({
-      user_id: req.params.shopId,
-      store_views: 1,
-      message_clicks: 1,
-      date: todayDate,
-    });
+    if (data) {
+      await models.store_analytics.increment("message_clicks", {
+        where: { id: data.id },
+      });
+    } else {
+      await models.store_analytics.create({
+        user_id: req.params.shopId,
+        store_views: 1,
+        message_clicks: 1,
+        date: todayDate,
+      });
+    }
+    res.json({ status: true });
+  } catch (error) {
+    console.log(error);
   }
-  res.json({ status: true });
 });
 
 //get all instock products of user

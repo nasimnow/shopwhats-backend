@@ -44,7 +44,6 @@ router.get("/:account_username", async (req, res) => {
       user_settings,
     });
   } catch (error) {
-    console.log(error);
     res.json({
       success: false,
       message: "Get failed",

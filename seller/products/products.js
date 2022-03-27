@@ -41,6 +41,7 @@ router.get("/count", async (req, res) => {
   let results;
   const userId = req.user.user.id;
   const today = DateTime.now().setZone("Asia/Kolkata").toISODate();
+  console.log("🚀 ~ file: products.js ~ line 44 ~ router.get ~ today", today);
   const views = await models.store_analytics.findOne({
     attributes: ["store_views", "message_clicks"],
     where: { user_id: req.user.user.id, date: today },
@@ -59,7 +60,6 @@ router.get("/count", async (req, res) => {
       products_count,
       cat_count,
     };
-  console.log(results);
 
   return res.json({
     status_code: 200,
@@ -92,7 +92,6 @@ router.get("/:id", async (req, res) => {
 
 //add new product
 router.post("/", async (req, res) => {
-  console.log(req.body);
   const response = await models.products.create(
     {
       ...req.body,

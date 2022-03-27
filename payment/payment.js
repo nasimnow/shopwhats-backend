@@ -15,7 +15,6 @@ const instance = new Razorpay({
 
 //initialiaze payment
 router.post("/orders", async (req, res) => {
-  console.log(req.body);
   try {
     const options = {
       amount: req.body.amount_local * 100,
@@ -55,7 +54,6 @@ router.post("/success", async (req, res) => {
       currency
     );
 
-    console.log(captureResponse);
     return res.status(200).json({
       status: "success",
       orderId: razorpayOrderId,
