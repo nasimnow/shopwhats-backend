@@ -54,6 +54,12 @@ router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
     const data = await models.store_analytics.findOne({
       where: { user_id: req.params.shopId, date: todayDate.toString() },
     });
+    console.log(
+      "🚀 ~ file: store.js ~ line 56 ~ router.get ~ todayDate.toString()",
+      todayDate.toString()
+    );
+
+    console.log("🚀 ~ file: store.js ~ line 57 ~ router.get ~ data", data);
 
     if (data) {
       await models.store_analytics.increment("store_views", {
