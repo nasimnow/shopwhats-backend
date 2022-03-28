@@ -11,7 +11,7 @@ const fn = Sequilize.fn;
 const col = Sequilize.col;
 const Op = Sequilize.Op;
 
-const todayDate = moment().tz("Asia/Kolkata").format("YYYY-MM-DD");
+const todayDate = DateTime.now().setZone("Asia/Kolkata").toISODate();
 console.log("🚀 ~ file: store.js ~ line 15 ~ todayDate", todayDate);
 //get all details of current store user by link
 router.get("/:store", (req, res) => {
