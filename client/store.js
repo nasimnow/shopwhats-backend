@@ -11,8 +11,7 @@ const fn = Sequilize.fn;
 const col = Sequilize.col;
 const Op = Sequilize.Op;
 
-const todayDate = DateTime.now().setZone("Asia/Kolkata").toISODate();
-console.log("🚀 ~ file: store.js ~ line 15 ~ todayDate", todayDate);
+const todayDate = DateTime.now().setZone("Asia/Kolkata").toISODate().toString();
 //get all details of current store user by link
 router.get("/:store", (req, res) => {
   const results = models.account.findOne({
@@ -51,26 +50,19 @@ router.get("/byid/:storeId", async (req, res) => {
 
 router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
   try {
-    const data = await models.store_analytics.findOne({
-      where: { user_id: req.params.shopId, date: todayDate.toString() },
+    const data = await models.analytics.findOne({
+      where: { user_id: req.params.shopId, event_date: todayDate },
     });
-    console.log(
-      "🚀 ~ file: store.js ~ line 56 ~ router.get ~ todayDate.toString()",
-      todayDate.toString()
-    );
-
-    console.log("🚀 ~ file: store.js ~ line 57 ~ router.get ~ data", data);
 
     if (data) {
-      await models.store_analytics.increment("store_views", {
+      await models.analytics.increment("store_views", {
         where: { id: data.id },
       });
     } else {
-      await models.store_analytics.create({
-        user_id: req.params.shopId,
+      await models.analytics.create({
+        user_id: +req.params.shopId,
         store_views: 1,
         message_clicks: 0,
-        date: todayDate,
       });
     }
     res.json({ status: true });
@@ -98,19 +90,18 @@ router.get("/analytics/productclick/:id", async (req, res) => {
 //update store whatsapp button clicks
 router.get("/analytics/messagecount/:shopId", async (req, res) => {
   try {
-    const data = await models.store_analytics.findOne({
-      where: { user_id: req.params.shopId, date: todayDate },
+    const data = await models.analytics.findOne({
+      where: { user_id: req.params.shopId, event_date: todayDate },
     });
     if (data) {
-      await models.store_analytics.increment("message_clicks", {
+      await models.analytics.increment("message_clicks", {
         where: { id: data.id },
       });
     } else {
-      await models.store_analytics.create({
-        user_id: req.params.shopId,
+      await models.analytics.create({
+        user_id: +req.params.shopId,
         store_views: 1,
         message_clicks: 1,
-        date: todayDate,
       });
     }
     res.json({ status: true });
@@ -208,8 +199,8 @@ router.get("/status/storecount", async (req, res) => {
 
 //get store anlaytics in bulk
 router.get("/status/views", async (req, res) => {
-  const responseViews = await models.store_analytics.findAll({
-    where: { date: todayDate },
+  const responseViews = await models.analytics.findAll({
+    where: { event_date: todayDate },
     attributes: {
       include: [
         [fn("SUM", col("store_analytics.store_views")), "total_views"],
@@ -217,8 +208,8 @@ router.get("/status/views", async (req, res) => {
       ],
     },
   });
-  const responseStore = await models.store_analytics.findAll({
-    where: { date: todayDate },
+  const responseStore = await models.analytics.findAll({
+    where: { event_date: todayDate },
     order: [["store_views", "desc"]],
 
     include: [

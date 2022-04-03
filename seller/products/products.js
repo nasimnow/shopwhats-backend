@@ -42,9 +42,9 @@ router.get("/count", async (req, res) => {
   const userId = req.user.user.id;
   const today = DateTime.now().setZone("Asia/Kolkata").toISODate();
   console.log("🚀 ~ file: products.js ~ line 44 ~ router.get ~ today", today);
-  const views = await models.store_analytics.findOne({
+  const views = await models.analytics.findOne({
     attributes: ["store_views", "message_clicks"],
-    where: { user_id: req.user.user.id, date: today },
+    where: { user_id: req.user.user.id, event_date: today },
   });
   const products_count = await models.products.count({
     where: { product_user: userId },

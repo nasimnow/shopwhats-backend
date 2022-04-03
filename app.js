@@ -3,15 +3,16 @@ const jwt = require("jsonwebtoken");
 const app = express();
 let cookieParser = require("cookie-parser");
 const cors = require("cors");
+const morgan = require("morgan");
 
 require("dotenv").config();
 const PORT = process.env.PORT || 5000;
 
+app.use(morgan("tiny"));
 app.use(cors());
 
 const sequelize = require("./dbconnection");
 const initModels = require("./models/init-models");
-const models = initModels(sequelize);
 
 app.use(cookieParser());
 app.use(express.json());

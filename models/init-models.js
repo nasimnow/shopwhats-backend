@@ -1,5 +1,6 @@
 var DataTypes = require("sequelize").DataTypes;
 var _account = require("./account");
+var _analytics = require("./analytics");
 var _categories = require("./categories");
 var _categories_main = require("./categories_main");
 var _links = require("./links");
@@ -11,6 +12,7 @@ var _store_analytics = require("./store_analytics");
 
 function initModels(sequelize) {
   var account = _account(sequelize, DataTypes);
+  var analytics = _analytics(sequelize, DataTypes);
   var categories = _categories(sequelize, DataTypes);
   var categories_main = _categories_main(sequelize, DataTypes);
   var links = _links(sequelize, DataTypes);
@@ -20,6 +22,8 @@ function initModels(sequelize) {
   var settings = _settings(sequelize, DataTypes);
   var store_analytics = _store_analytics(sequelize, DataTypes);
 
+  analytics.belongsTo(account, { as: "user", foreignKey: "user_id"});
+  account.hasMany(analytics, { as: "analytics", foreignKey: "user_id"});
   categories.belongsTo(account, { as: "cat_user_account", foreignKey: "cat_user"});
   account.hasMany(categories, { as: "categories", foreignKey: "cat_user"});
   links.belongsTo(account, { as: "account", foreignKey: "account_id"});
@@ -41,6 +45,7 @@ function initModels(sequelize) {
 
   return {
     account,
+    analytics,
     categories,
     categories_main,
     links,
