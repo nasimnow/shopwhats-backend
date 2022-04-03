@@ -205,8 +205,8 @@ router.get("/status/views", async (req, res) => {
     where: { event_date: todayDate },
     attributes: {
       include: [
-        [fn("SUM", col("store_analytics.store_views")), "total_views"],
-        [fn("SUM", col("store_analytics.message_clicks")), "total_clicks"],
+        [fn("SUM", col("analytics.store_views")), "total_views"],
+        [fn("SUM", col("analytics.message_clicks")), "total_clicks"],
       ],
     },
   });
