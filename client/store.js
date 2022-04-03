@@ -63,6 +63,7 @@ router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
         user_id: +req.params.shopId,
         store_views: 1,
         message_clicks: 0,
+        event_date: todayDate,
       });
     }
     res.json({ status: true });
@@ -102,6 +103,7 @@ router.get("/analytics/messagecount/:shopId", async (req, res) => {
         user_id: +req.params.shopId,
         store_views: 1,
         message_clicks: 1,
+        event_date: todayDate,
       });
     }
     res.json({ status: true });
