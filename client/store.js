@@ -11,7 +11,6 @@ const fn = Sequilize.fn;
 const col = Sequilize.col;
 const Op = Sequilize.Op;
 
-const todayDate = DateTime.now().setZone("Asia/Kolkata").toISODate().toString();
 //get all details of current store user by link
 router.get("/:store", (req, res) => {
   const results = models.account.findOne({
@@ -49,10 +48,16 @@ router.get("/byid/:storeId", async (req, res) => {
 });
 
 router.get("/analytics/storeviewsnew/:shopId", async (req, res) => {
+  const todayDate = DateTime.now()
+    .setZone("Asia/Kolkata")
+    .toISODate()
+    .toString();
+
   try {
     const data = await models.analytics.findOne({
       where: { user_id: req.params.shopId, event_date: todayDate },
     });
+    console.log(data);
 
     if (data) {
       await models.analytics.increment("store_views", {
@@ -90,6 +95,11 @@ router.get("/analytics/productclick/:id", async (req, res) => {
 
 //update store whatsapp button clicks
 router.get("/analytics/messagecount/:shopId", async (req, res) => {
+  const todayDate = DateTime.now()
+    .setZone("Asia/Kolkata")
+    .toISODate()
+    .toString();
+
   try {
     const data = await models.analytics.findOne({
       where: { user_id: req.params.shopId, event_date: todayDate },

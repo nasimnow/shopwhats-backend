@@ -5,9 +5,6 @@ const sequelize = require("../dbconnection");
 const initModels = require("../models/init-models");
 const models = initModels(sequelize);
 const Sequilize = require("sequelize");
-const fn = Sequilize.fn;
-const lit = Sequilize.literal;
-const Op = Sequilize.Op;
 
 router.get("/migrate_variant_price", async (req, res) => {
   let variants = await models.products.findAll();
