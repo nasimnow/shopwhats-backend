@@ -211,6 +211,11 @@ router.get("/status/storecount", async (req, res) => {
 
 //get store anlaytics in bulk
 router.get("/status/views", async (req, res) => {
+  const todayDate = DateTime.now()
+    .setZone("Asia/Kolkata")
+    .toISODate()
+    .toString();
+
   const responseViews = await models.analytics.findAll({
     where: { event_date: todayDate },
     attributes: {
