@@ -19,6 +19,13 @@ router.get("/", async (req, res) => {
     }
   );
   const results = await models.account.findByPk(req.user.user.id, {
+    include: [
+      {
+        model: models.settings,
+        as: "settings",
+        attributes: { exclude: ["user_id"] },
+      },
+    ],
     attributes: { exclude: ["account_password"] },
   });
   return res.status(201).json({ status: true, data: results });

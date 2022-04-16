@@ -17,8 +17,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     event_date: {
       type: DataTypes.DATEONLY,
-      allowNull: true,
-      defaultValue: Sequelize.Sequelize.fn('current_timestamp')
+      allowNull: false
     },
     store_views: {
       type: DataTypes.INTEGER,
