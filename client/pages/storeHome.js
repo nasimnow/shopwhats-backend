@@ -10,6 +10,9 @@ const Op = Sequilize.Op;
 router.get("/:store", async (req, res) => {
   console.log(req.hostname);
   console.log(req.originalUrl);
+  const proxyHost = req.headers["x-forwarded-host"];
+  const host = proxyHost ? proxyHost : req.headers.host;
+  console.log(host, proxyHost);
   const storeinfo = await models.account.findOne({
     where: { account_store_link: req.params.store },
   });
