@@ -8,6 +8,7 @@ const Sequilize = require("sequelize");
 const Op = Sequilize.Op;
 
 router.get("/:store", async (req, res) => {
+  console.log(req.hostname, "hhhost name");
   const storeinfo = await models.account.findOne({
     where: { account_store_link: req.params.store },
   });

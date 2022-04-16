@@ -13,7 +13,6 @@ const Op = Sequilize.Op;
 
 //get all details of current store user by link
 router.get("/:store", (req, res) => {
-  console.log(req.hostname, "hooost name");
   const results = models.account.findOne({
     where: { account_store_link: req.params.store },
   });
