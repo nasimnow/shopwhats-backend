@@ -12,6 +12,7 @@ router.get("/:store", async (req, res) => {
   console.log(req.originalUrl);
 
   const proxyHost = req.headers["x-forwarded-host"];
+  console.log(req.headers["X-Forwarded-For"], "forwaded for");
   const host = proxyHost ? proxyHost : req.headers.host;
   console.log(host, proxyHost, "proxyhost");
   console.log(req.ip, "ip");
