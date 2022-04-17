@@ -133,13 +133,35 @@ router.get(
     let offset = limit * pageNo - limit;
     let productCount = 0;
 
+    const storeDetails = await models.account.findOne({
+      where: { id: storeId },
+      include: [
+        {
+          model: models.settings,
+          as: "settings",
+          attributes: { exclude: ["user_id"] },
+        },
+      ],
+    });
+
+    const showProductsOutOfStock =
+      storeDetails.settings.length > 0
+        ? storeDetails.settings[0].show_outofstock
+        : false;
+
     let response = {};
     if (["all", "popular"].includes(productCat)) {
       productCount = await models.products.count({
-        where: { product_user: storeId, product_stock: { [Op.ne]: 0 } },
+        where: {
+          product_user: storeId,
+          ...(!showProductsOutOfStock && { product_stock: { [Op.ne]: 0 } }),
+        },
       });
       response = await models.products.findAll({
-        where: { product_user: req.params.id, product_stock: { [Op.ne]: 0 } },
+        where: {
+          product_user: req.params.id,
+          ...(!showProductsOutOfStock && { product_stock: { [Op.ne]: 0 } }),
+        },
         include: [
           {
             model: models.products_images,
@@ -162,15 +184,15 @@ router.get(
       productCount = await models.products.count({
         where: {
           product_user: req.params.id,
-          product_stock: { [Op.ne]: 0 },
           product_cat: +productCat,
+          ...(!showProductsOutOfStock && { product_stock: { [Op.ne]: 0 } }),
         },
       });
       response = await models.products.findAll({
         where: {
           product_user: req.params.id,
-          product_stock: { [Op.ne]: 0 },
           product_cat: +productCat,
+          ...(!showProductsOutOfStock && { product_stock: { [Op.ne]: 0 } }),
         },
         include: [
           {
