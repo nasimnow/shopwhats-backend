@@ -7,17 +7,36 @@ const models = initModels(sequelize);
 const Sequilize = require("sequelize");
 const Op = Sequilize.Op;
 
-router.get("/:store", async (req, res) => {
-  console.log(req.hostname);
-  console.log(req.originalUrl);
-
-  const proxyHost = req.headers["x-forwarded-host"];
-  console.log(req.headers["X-Forwarded-For"], "forwaded for");
-  const host = proxyHost ? proxyHost : req.headers.host;
-  console.log(host, proxyHost, "proxyhost");
-  console.log(req.ip, "ip");
+router.get("/link/:store", async (req, res) => {
   const storeinfo = await models.account.findOne({
     where: { account_store_link: req.params.store },
+  });
+
+  //no store by that url
+  if (!storeinfo)
+    return res.status(404).json({ status: false, error: "User Doesnt Exist" });
+
+  const categories = await models.categories.findAll({
+    where: { cat_user: storeinfo.id },
+    order: [
+      ["cat_clicks", "desc"],
+      ["id", "desc"],
+    ],
+  });
+
+  return res.status(200).json({
+    status: true,
+    data: {
+      storeinfo,
+      categories,
+    },
+  });
+});
+
+router.get("/domain/:storeDomain", async (req, res) => {
+  console.log(req.params.storeDomain);
+  const storeinfo = await models.account.findOne({
+    where: { account_domain: req.params.storeDomain },
   });
 
   //no store by that url
