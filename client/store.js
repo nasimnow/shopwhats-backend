@@ -154,13 +154,19 @@ router.get(
       productCount = await models.products.count({
         where: {
           product_user: storeId,
-          ...(!showProductsOutOfStock && { product_stock: { [Op.ne]: 0 } }),
+          ...(!showProductsOutOfStock && {
+            product_inventory_count: { [Op.gt]: 0 },
+          }),
+          product_stock: { [Op.ne]: 0 },
         },
       });
       response = await models.products.findAll({
         where: {
           product_user: req.params.id,
-          ...(!showProductsOutOfStock && { product_stock: { [Op.ne]: 0 } }),
+          ...(!showProductsOutOfStock && {
+            product_inventory_count: { [Op.gt]: 0 },
+          }),
+          product_stock: { [Op.ne]: 0 },
         },
         include: [
           {
