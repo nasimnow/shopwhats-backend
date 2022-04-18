@@ -1,0 +1,1 @@
+added inventory in product and variants

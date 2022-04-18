@@ -65,7 +65,11 @@ router.get("/products/:storeid/:pageno", async (req, res) => {
   const pageNo = +req.params.pageno;
   const limit = 10;
   const productCount = await models.products.count({
-    where: { product_user: storeId, product_stock: { [Op.ne]: 0 } },
+    where: {
+      product_user: storeId,
+      product_stock: { [Op.ne]: 0 },
+      product_inventory_count: { [Op.gt]: 0 },
+    },
   });
   let offset = limit * pageNo - limit;
   const products = await models.products.findAll({

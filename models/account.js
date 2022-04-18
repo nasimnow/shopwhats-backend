@@ -11,6 +11,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(200),
       allowNull: false
     },
+    account_domain: {
+      type: DataTypes.STRING(200),
+      allowNull: true
+    },
     account_store_image: {
       type: DataTypes.STRING(3000),
       allowNull: true

@@ -24,6 +24,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 1
     },
+    product_inventory_count: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     product_price: {
       type: DataTypes.INTEGER,
       allowNull: false,

@@ -15,6 +15,10 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
+    variant_inventory_count: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     variant_name: {
       type: DataTypes.STRING(200),
       allowNull: false

@@ -41,7 +41,6 @@ router.get("/count", async (req, res) => {
   let results;
   const userId = req.user.user.id;
   const today = DateTime.now().setZone("Asia/Kolkata").toISODate();
-  console.log("🚀 ~ file: products.js ~ line 44 ~ router.get ~ today", today);
   const views = await models.analytics.findOne({
     attributes: ["store_views", "message_clicks"],
     where: { user_id: req.user.user.id, event_date: today },
@@ -155,6 +154,7 @@ router.put("/:id", async (req, res) => {
 
   //update existing variants
   products_variants_old.forEach(async (element) => {
+    console.log(element);
     await models.products_variants.update(element, {
       where: { id: element.id },
     });
@@ -191,11 +191,19 @@ router.delete("/:id", (req, res) => {
 });
 
 //flip product stock status
-router.put("/stock/:id", async (req, res) => {
-  const response = await models.products.update(
-    { product_stock: lit("NOT product_stock") },
-    { where: { id: req.params.id, product_user: req.user.user.id } }
-  );
+router.put("/stock/:type/:id", async (req, res) => {
+  let response;
+  if (req.params.type === "visible") {
+    response = await models.products.update(
+      { product_stock: lit("NOT product_stock") },
+      { where: { id: req.params.id, product_user: req.user.user.id } }
+    );
+  } else if (req.params.type === "stock") {
+    response = await models.products.update(
+      { product_inventory_count: 0 },
+      { where: { id: req.params.id, product_user: req.user.user.id } }
+    );
+  }
   return res.json({
     status_code: 201,
     status: true,
