@@ -203,6 +203,10 @@ router.put("/stock/:type/:id", async (req, res) => {
       { product_inventory_count: 0 },
       { where: { id: req.params.id, product_user: req.user.user.id } }
     );
+    await models.products_variants.update(
+      { variant_inventory_count: 0 },
+      { where: { product_id: req.params.id } }
+    );
   }
   return res.json({
     status_code: 201,

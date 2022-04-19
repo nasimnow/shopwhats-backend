@@ -126,6 +126,7 @@ router.get("/analytics/messagecount/:shopId", async (req, res) => {
 router.get(
   "/allproducts/:id/:cat/:sortname/:sortmode/:pageno",
   async (req, res) => {
+    //TODO handle hide product if no stock in inventory
     const storeId = +req.params.id;
     const productCat = req.params.cat;
     const pageNo = +req.params.pageno;
