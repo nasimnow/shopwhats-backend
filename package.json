@@ -24,6 +24,7 @@
     "mysql2": "^2.2.5",
     "nodemon": "^2.0.6",
     "razorpay": "^2.0.6",
-    "sequelize": "^6.5.0"
+    "sequelize": "^6.5.0",
+    "twilio": "^3.80.0"
   }
 }
