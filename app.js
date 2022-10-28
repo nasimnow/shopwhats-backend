@@ -5,12 +5,12 @@ let cookieParser = require("cookie-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 //twilio for text message
-const twilio = require("twilio");
+// const twilio = require("twilio");
 
-//twilio requirements -- Texting API
-const accountSid = "ACe69b284822d5597964796af5e0c31f26";
-const authToken = "a0ab1dcb2bb7379c1d9725da6d97de03";
-const client = new twilio(accountSid, authToken);
+// //twilio requirements -- Texting API
+// const accountSid = "ACe69b284822d5597964796af5e0c31f26";
+// const authToken = "a0ab1dcb2bb7379c1d9725da6d97de03";
+// const client = new twilio(accountSid, authToken);
 
 require("dotenv").config();
 const PORT = process.env.PORT || 5000;
@@ -18,38 +18,37 @@ const PORT = process.env.PORT || 5000;
 app.use(morgan("tiny"));
 app.use(cors());
 
-//Twilio
-app.get("/send-text", (req, res) => {
-  //_GET Variables
-  const { recipient, textmessage } = req.query;
+// //Twilio
+// app.get("/send-text", (req, res) => {
+//   //_GET Variables
+//   const { recipient, textmessage } = req.query;
 
-  //Send Text
-  client.messages
-    .create({
-      body: textmessage,
-      to: recipient, // Text this number
-      from: "+18434387145", // From a valid Twilio number
-    })
-    .then((message) => {
-      res.send({
-        status_code: 200,
-        status: true,
-        message: "Text Sent",
-        data: message,
-      });
-    })
-    .catch((err) => {
-      res.send({
-        status_code: 500,
-        status: false,
-        message: "Text Failed",
-        data: err,
-      });
-    });
-});
+//   //Send Text
+//   client.messages
+//     .create({
+//       body: textmessage,
+//       to: recipient, // Text this number
+//       from: "+18434387145", // From a valid Twilio number
+//     })
+//     .then((message) => {
+//       res.send({
+//         status_code: 200,
+//         status: true,
+//         message: "Text Sent",
+//         data: message,
+//       });
+//     })
+//     .catch((err) => {
+//       res.send({
+//         status_code: 500,
+//         status: false,
+//         message: "Text Failed",
+//         data: err,
+//       });
+//     });
+// });
 
-const sequelize = require("./dbconnection");
-const initModels = require("./models/init-models");
+const { expressSharp, HttpAdapter } = require("express-sharp");
 
 app.use(cookieParser());
 app.use(express.json());
@@ -111,6 +110,18 @@ app.get("/api/seller/logout", (req, res) => {
   req.logOut();
   return res.json({ message: "succesfull Logggedout", login: false });
 });
+
+const imageHttpAdapter = new HttpAdapter({
+  prefixUrl: "",
+});
+
+app.use(
+  "/image-scaler",
+  expressSharp({
+    autoUseWebp: true,
+    imageAdapter: imageHttpAdapter,
+  })
+);
 
 function isLogin(req, res, next) {
   const bearerHeader = req.headers["authorization"];
